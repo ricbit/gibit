@@ -39,6 +39,8 @@ import com.ricbit.gibit.shared.SeriesNotFoundException;
  * The server side implementation of the RPC service.
  */
 public class SearchServiceImpl extends RemoteServiceServlet implements SearchService {
+  private static final int MAX_KEYS_IN_A_QUERY = 1000;
+
   private static final long serialVersionUID = 1L;  
 
   private WordSplitter wordSplitter;
@@ -104,7 +106,8 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 
   private ArrayList<SeriesDto> buildSeriesDto(Iterable<Long> seriesIdList) 
       throws SeriesNotFoundException {
-    Iterable<Key> keyList = keyGenerator.generate("Series", seriesIdList);       
+    Iterable<Long> limitedSeries = Iterables.limit(seriesIdList, MAX_KEYS_IN_A_QUERY);
+    Iterable<Key> keyList = keyGenerator.generate("Series", limitedSeries);       
     Map<Key, Entity> resultMap = datastoreService.get(keyList);
 
     ArrayList<SeriesDto> seriesDtoList = Lists.newArrayList();
