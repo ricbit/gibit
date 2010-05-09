@@ -5,3 +5,4 @@ syntax: regexp
 ^war/WEB-INF/appengine-generated/.*
 ^test-classes/.*
 \.bak$
+\.pyc$

@@ -112,7 +112,7 @@ def dump_direct_index(user, password, filename):
   publisher_data = dict(load_publisher(user, password))
   f = codecs.open(filename, "w", "utf-8")
   for id,name,issues,year,publisher,has_gallery in data:
-    f.write(u"%s:%s,%s,%s,%s\n" % (id,issues,year,decode(name),decode(publisher_data[publisher])))
+    f.write(u"%s:%s,%s,%s,%s,%s\n" % (id,issues,year,decode(name),decode(publisher_data[publisher]),has_gallery))
   f.close()
   
 if __name__ == "__main__":
