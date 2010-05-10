@@ -26,35 +26,53 @@ public class SeriesDto implements Serializable {
   private int issues;
   private String name;
   private String publisher;
+  private boolean coverPresent;
   
   public void setId(int id) {
     this.id = id;
   }
+  
   public int getId() {
     return id;
   }
+  
   public void setYear(int year) {
     this.year = year;
   }
+  
   public int getYear() {
     return year;
   }
+  
   public void setName(String name) {
     this.name = name;
   }
+  
   public String getName() {
     return name;
   }
+  
   public void setIssues(int issues) {
     this.issues = issues;
   }
+  
   public int getIssues() {
     return issues;
   }
+  
   public void setPublisher(String publisher) {
     this.publisher = publisher;
   }
+  
   public String getPublisher() {
     return publisher;
+  }
+  
+  public void setCoverPresent(boolean coverPresent) {
+    this.coverPresent = coverPresent;
+  }
+  
+  public boolean isCoverPresent() {
+    return coverPresent;
   }
 }

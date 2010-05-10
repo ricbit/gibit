@@ -1,0 +1,37 @@
+<!-- HelloWidgetWorld.ui.xml -->
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
+  
+  <ui:style>
+    .center {
+      text-align: center;
+    }
+    .query {
+      width: 400px;
+      margin-right: 5px;
+    }
+    .fixedWidth {
+      width: 450px;
+      text-align: center;
+      display: inline;
+    }
+  </ui:style>
+  
+  <gwt:FlowPanel>
+    <gwt:SimplePanel styleName="{style.center}">
+      <gwt:Image url="logotipo_gibit.jpg" />
+    </gwt:SimplePanel>
+    <gwt:FlowPanel styleName="{style.center}">
+      <gwt:FlowPanel styleName="{style.fixedWidth}">
+        <gwt:Label text="Enter a comic series name (Batman, X-Men, Mônica):" />
+      </gwt:FlowPanel>
+      <gwt:FlowPanel styleName="{style.fixedWidth}">
+        <gwt:TextBox ui:field="queryField" styleName="{style.query}" text="new mutants" />
+        <gwt:Button ui:field="sendButton" text="Send"  />
+      </gwt:FlowPanel>
+    </gwt:FlowPanel>
+    <gwt:FlowPanel ui:field="answerPanel" />
+  </gwt:FlowPanel>
+
+</ui:UiBinder>

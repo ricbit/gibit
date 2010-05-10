@@ -26,5 +26,5 @@ class Series(db.Model):
   year = db.IntegerProperty()
   issues = db.IntegerProperty()  
   publisher = db.StringProperty()
-  hascover = db.BooleanProperty()
+  hascover = db.IntegerProperty()
   

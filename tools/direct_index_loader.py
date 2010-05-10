@@ -34,7 +34,7 @@ class SeriesLoader(bulkloader.Loader):
         self, 'Series',
         [('issues', lambda x: int(x.split(":")[1])), ('year', lambda x: int(x)), 
          ('name', lambda x: x.decode("utf-8")), ('publisher', lambda x: x.decode("utf-8")),
-         ('hascover', lambda x: bool(int(x)))])
+         ('hascover', lambda x: int(x))])
   def generate_key(self, number, values):
     return values[0].split(":")[0]
         

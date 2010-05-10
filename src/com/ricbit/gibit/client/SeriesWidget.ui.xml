@@ -1,0 +1,25 @@
+<!-- HelloWidgetWorld.ui.xml -->
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
+  
+  <ui:style>
+    .outerPanel {
+      width: 220px;
+      margin: 5px;
+      text-align: center;
+      display: inline;
+      float: left;
+    }
+  </ui:style>
+  
+  <gwt:FlowPanel styleName="{style.outerPanel}">
+    <gwt:SimplePanel>
+      <gwt:Image ui:field="seriesImage" />
+    </gwt:SimplePanel>
+    <gwt:FlowPanel >
+      <gwt:HTML ui:field="seriesName" />
+    </gwt:FlowPanel>
+  </gwt:FlowPanel>
+
+</ui:UiBinder>

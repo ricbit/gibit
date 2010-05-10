@@ -21,134 +21,99 @@ import java.util.List;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.ricbit.gibit.shared.SeriesDto;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Gibit implements EntryPoint {
+public class Gibit extends Composite implements EntryPoint {
   /**
-   * Create a remote service proxy to talk to the server-side Greeting service.
+   * Create a remote service proxy to talk to the server-side search service.
    */
-  private final SearchServiceAsync greetingService = GWT.create(SearchService.class);
+  private final SearchServiceAsync searchService = GWT.create(SearchService.class);
+
+  interface Binder extends UiBinder<Widget, Gibit> {}
+  private static Binder BINDER = GWT.create(Binder.class);
+
+  @UiField
+  TextBox queryField;
+
+  @UiField
+  Button sendButton;
+
+  @UiField
+  FlowPanel answerPanel;
+
+  public Gibit() {
+    initWidget(BINDER.createAndBindUi(this));
+  }
 
   /**
    * This is the entry point method.
    */
   public void onModuleLoad() {
-    final Button sendButton = new Button("Send");
-    final TextBox nameField = new TextBox();
-    nameField.setText("new mutants");
-    final HTML answer = new HTML();
+    RootPanel.get().add(this);
+    queryField.setFocus(true);
+    queryField.selectAll();
+  }
 
-    // We can add style names to widgets
-    sendButton.addStyleName("sendButton");
+  @UiHandler("sendButton")
+  void handleClick(ClickEvent event) {
+    performQuery();
+  }
 
-    // Add the nameField and sendButton to the RootPanel
-    // Use RootPanel.get() to get the entire body element
-    RootPanel.get("nameFieldContainer").add(nameField);
-    RootPanel.get("sendButtonContainer").add(sendButton);
-    RootPanel.get("answer").add(answer);
+  @UiHandler("queryField")
+  void handleKeypress(KeyUpEvent event) {
+    if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+      performQuery();
+    }
+  }
 
-    // Focus the cursor on the name field when the app loads
-    nameField.setWidth("400px");
-    nameField.setFocus(true);
-    nameField.selectAll();
+  private void performQuery() {
+    sendButton.setEnabled(false);
+    answerPanel.clear();
+    searchService.searchServer(queryField.getText(), new AsyncCallback<List<SeriesDto>>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        queryNotFound();
+      }
 
-    // Create the popup dialog box
-    final DialogBox dialogBox = new DialogBox();
-    dialogBox.setText("Remote Procedure Call");
-    dialogBox.setAnimationEnabled(true);
-    final Button closeButton = new Button("Close");
-    // We can set the id of a widget by accessing its Element
-    closeButton.getElement().setId("closeButton");
-    final Label textToServerLabel = new Label();
-    final HTML serverResponseLabel = new HTML();
-    VerticalPanel dialogVPanel = new VerticalPanel();
-    dialogVPanel.addStyleName("dialogVPanel");
-    dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-    dialogVPanel.add(textToServerLabel);
-    dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-    dialogVPanel.add(serverResponseLabel);
-    dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-    dialogVPanel.add(closeButton);
-    dialogBox.setWidget(dialogVPanel);
-
-    // Add a handler to close the DialogBox
-    closeButton.addClickHandler(new ClickHandler() {
-      public void onClick(ClickEvent event) {
-        dialogBox.hide();
-        sendButton.setEnabled(true);
-        sendButton.setFocus(true);
+      @Override
+      public void onSuccess(List<SeriesDto> results) {
+        displayResults(results);
       }
     });
-
-    // Create a handler for the sendButton and nameField
-    class MyHandler implements ClickHandler, KeyUpHandler {
-      /**
-       * Fired when the user clicks on the sendButton.
-       */
-      public void onClick(ClickEvent event) {
-        sendNameToServer();
-      }
-
-      /**
-       * Fired when the user types in the nameField.
-       */
-      public void onKeyUp(KeyUpEvent event) {
-        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-          sendNameToServer();
-        }
-      }
-
-      /**
-       * Send the name from the nameField to the server and wait for a response.
-       */
-      private void sendNameToServer() {
-        // First, we validate the input.
-        answer.setText("");
-        String textToServer = nameField.getText();
-
-        // Then, we send the input to the server.
-        sendButton.setEnabled(false);
-        textToServerLabel.setText(textToServer);
-        serverResponseLabel.setText("");
-        greetingService.searchServer(textToServer,
-            new AsyncCallback<List<SeriesDto>>() {
-          public void onFailure(Throwable caught) {
-            answer.setHTML("Series not found.");
-            sendButton.setEnabled(true);
-          }
-
-          public void onSuccess(List<SeriesDto> results) {
-            StringBuilder builder = new StringBuilder();
-            for (SeriesDto series : results) {
-              builder.append("<a href=\"http://www.comics.org/series/"+series.getId()+"\"><b>"+
-                  series.getName()+"</b> ("+series.getPublisher()+", " + series.getYear()+
-                  ")</a><br/>");
-            }
-            answer.setHTML(builder.toString());
-            sendButton.setEnabled(true);
-          }
-        });
-      }
-    }
-
-    // Add a handler to send the name to the server
-    MyHandler handler = new MyHandler();
-    sendButton.addClickHandler(handler);
-    nameField.addKeyUpHandler(handler);
   }
+  
+  private void queryNotFound() {
+    answerPanel.add(new HTML("<center>Series not found.</center>"));
+    sendButton.setEnabled(true);
+  }
+  
+  private void displayResults(List<SeriesDto> results) {
+    int seriesPerPage = answerPanel.getOffsetWidth() / 230;
+    int amountToDisplay = Math.min(results.size(), seriesPerPage);
+    for (int i = 0; i < amountToDisplay; i++) {
+      SeriesWidget widget = new SeriesWidget();
+      widget.setSeries(results.get(i));
+      answerPanel.add(widget);
+    }
+    sendButton.setEnabled(true);
+  }
+
 }
+

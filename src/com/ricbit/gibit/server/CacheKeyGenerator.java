@@ -26,6 +26,6 @@ public class CacheKeyGenerator {
   
   public String generateCacheKey(List<String> words) {
     Collections.sort(words);
-    return JOINER.join(words);
+    return "2" + JOINER.join(words);
   }
 }

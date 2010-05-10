@@ -119,6 +119,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
       seriesDto.setYear(((Long)properties.get("year")).intValue());
       seriesDto.setIssues(((Long)properties.get("issues")).intValue());
       seriesDto.setPublisher((String)properties.get("publisher"));
+      seriesDto.setCoverPresent(((Long)properties.get("hascover")) == 1);
       seriesDtoList.add(seriesDto);      
     }
     return seriesDtoList;
