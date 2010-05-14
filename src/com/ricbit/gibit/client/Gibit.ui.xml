@@ -1,0 +1,56 @@
+<!-- 
+  Copyright (C) 2010 Google Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License"); 
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
+  
+  <ui:style>
+    .center {
+      text-align: center;
+    }
+    .query {
+      width: 400px;
+      margin-right: 5px;
+    }
+    .fixedWidth {
+      width: 450px;
+      text-align: center;
+      display: inline;
+    }
+    .answerPanel {
+      display: inline;
+    }
+  </ui:style>
+  
+  <gwt:FlowPanel ui:field="outerPanel">
+    <gwt:SimplePanel styleName="{style.center}">
+      <gwt:Image url="logotipo_gibit.jpg" />
+    </gwt:SimplePanel>
+    <gwt:FlowPanel styleName="{style.center}">
+      <gwt:FlowPanel styleName="{style.fixedWidth}">
+        <gwt:Label text="Enter a comic series name (Batman, X-Men, Mônica):" />
+      </gwt:FlowPanel>
+      <gwt:FlowPanel styleName="{style.fixedWidth}">
+        <gwt:TextBox ui:field="queryField" styleName="{style.query}" text="new mutants" />
+        <gwt:Button ui:field="sendButton" text="Send"  />
+      </gwt:FlowPanel>
+    </gwt:FlowPanel>
+    <gwt:SimplePanel ui:field="answerOuter">
+      <gwt:FlowPanel ui:field="answerPanel" styleName="answerPanel" />
+    </gwt:SimplePanel>
+  </gwt:FlowPanel>
+
+</ui:UiBinder>
