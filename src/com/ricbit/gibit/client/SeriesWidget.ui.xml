@@ -21,17 +21,31 @@
     .outerPanel {
       width: 220px;
       margin: 5px;
-      text-align: center;
-      display: inline;
       float: left;
+      display: inline;
+    }
+    .imageOuter {
+      height: 330px;
+      position: relative;
+    }
+    .imageInner {
+      text-align: center;
+      width: 220px;
+      position: absolute;
+      bottom: 0px;
+    }
+    .image {
+      max-height: 330px;
     }
   </ui:style>
   
   <gwt:FlowPanel styleName="{style.outerPanel}">
-    <gwt:SimplePanel>
-      <gwt:Image ui:field="seriesImage" />
+    <gwt:SimplePanel styleName="{style.imageOuter}">
+      <gwt:SimplePanel styleName="{style.imageInner}">
+        <gwt:Image ui:field="seriesImage" styleName="{style.image}" />
+      </gwt:SimplePanel>
     </gwt:SimplePanel>
-    <gwt:FlowPanel >
+    <gwt:FlowPanel>
       <gwt:HTML ui:field="seriesName" />
     </gwt:FlowPanel>
   </gwt:FlowPanel>

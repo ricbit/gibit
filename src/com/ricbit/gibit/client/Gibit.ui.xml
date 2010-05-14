@@ -30,9 +30,12 @@
       text-align: center;
       display: inline;
     }
+    .answerPanel {
+      display: inline;
+    }
   </ui:style>
   
-  <gwt:FlowPanel>
+  <gwt:FlowPanel ui:field="outerPanel">
     <gwt:SimplePanel styleName="{style.center}">
       <gwt:Image url="logotipo_gibit.jpg" />
     </gwt:SimplePanel>
@@ -45,7 +48,9 @@
         <gwt:Button ui:field="sendButton" text="Send"  />
       </gwt:FlowPanel>
     </gwt:FlowPanel>
-    <gwt:FlowPanel ui:field="answerPanel" />
+    <gwt:SimplePanel ui:field="answerOuter">
+      <gwt:FlowPanel ui:field="answerPanel" styleName="answerPanel" />
+    </gwt:SimplePanel>
   </gwt:FlowPanel>
 
 </ui:UiBinder>
