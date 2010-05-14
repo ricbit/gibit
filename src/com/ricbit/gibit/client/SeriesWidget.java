@@ -35,7 +35,7 @@ public class SeriesWidget extends Composite {
   
   @UiField
   HTML seriesName;
-  
+
   public SeriesWidget() {
     initWidget(BINDER.createAndBindUi(this));
   }

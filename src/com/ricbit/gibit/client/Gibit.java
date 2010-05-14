@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.ricbit.gibit.shared.SeriesDto;
@@ -56,6 +57,12 @@ public class Gibit extends Composite implements EntryPoint {
 
   @UiField
   FlowPanel answerPanel;
+  
+  @UiField
+  FlowPanel outerPanel;
+
+  @UiField
+  SimplePanel answerOuter;
 
   public Gibit() {
     initWidget(BINDER.createAndBindUi(this));
@@ -99,12 +106,12 @@ public class Gibit extends Composite implements EntryPoint {
   }
   
   private void queryNotFound() {
-    answerPanel.add(new HTML("<center>Series not found.</center>"));
+    answerPanel.add(new HTML("<center>Series not found.</center>"));    
     sendButton.setEnabled(true);
   }
   
   private void displayResults(List<SeriesDto> results) {
-    int seriesPerPage = answerPanel.getOffsetWidth() / 230;
+    int seriesPerPage = (answerOuter.getOffsetWidth() - 50) / 230;
     int amountToDisplay = Math.min(results.size(), seriesPerPage);
     for (int i = 0; i < amountToDisplay; i++) {
       SeriesWidget widget = new SeriesWidget();
