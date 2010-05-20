@@ -20,8 +20,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ricbit.gibit.shared.SeriesDto;
 
@@ -34,19 +34,26 @@ public class SeriesWidget extends Composite {
   Image seriesImage;
   
   @UiField
-  HTML seriesName;
-
+  InlineLabel seriesName;
+  
+  @UiField
+  InlineLabel seriesInfo;
+  
+  @UiField
+  AnchorPanel anchor;
+  
   public SeriesWidget() {
     initWidget(BINDER.createAndBindUi(this));
   }
 
   public void setSeries(SeriesDto series) {
-    seriesName.setHTML(
-        "<b>"+ series.getName()+"</b> ("+series.getPublisher()+", " + series.getYear() + ")");
+    anchor.setHref("http://www.comics.org/series/" + series.getId());
+    seriesName.setText(series.getName());
+    seriesInfo.setText(" (" + series.getPublisher() + ", " + series.getYear() + ")");
     if (series.isCoverPresent()) {
       seriesImage.setUrl("http://www.ricbit.com/gibit/" + series.getId() + ".jpg");
     } else {      
       seriesImage.setUrl("http://www.ricbit.com/gibit/missing.jpg");
     }
-  }
+  }  
 }

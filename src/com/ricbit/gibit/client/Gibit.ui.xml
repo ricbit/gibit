@@ -18,8 +18,9 @@
     xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
   
   <ui:style>
-    .center {
+    .queryPanel {
       text-align: center;
+      margin-top: 20px;
     }
     .query {
       width: 400px;
@@ -31,26 +32,39 @@
       display: inline;
     }
     .answerPanel {
-      display: inline;
+      display: block;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .answerOuter {
+      margin-right: 10px;
+    }
+    .clearBoth {
+      clear: both;
+    }
+    .image {
+      width: 500px;
+      height: 230px;
+      display: block;
+      margin: 10px auto;
     }
   </ui:style>
   
   <gwt:FlowPanel ui:field="outerPanel">
-    <gwt:SimplePanel styleName="{style.center}">
-      <gwt:Image url="logotipo_gibit.jpg" />
-    </gwt:SimplePanel>
-    <gwt:FlowPanel styleName="{style.center}">
+    <gwt:Image url="logotipo_gibit.jpg" styleName="{style.image}" />
+    <gwt:FlowPanel styleName="{style.queryPanel}">
       <gwt:FlowPanel styleName="{style.fixedWidth}">
         <gwt:Label text="Enter a comic series name (Batman, X-Men, Mônica):" />
       </gwt:FlowPanel>
       <gwt:FlowPanel styleName="{style.fixedWidth}">
         <gwt:TextBox ui:field="queryField" styleName="{style.query}" text="new mutants" />
-        <gwt:Button ui:field="sendButton" text="Send"  />
+        <gwt:Button ui:field="sendButton" text="Send" />
       </gwt:FlowPanel>
     </gwt:FlowPanel>
-    <gwt:SimplePanel ui:field="answerOuter">
-      <gwt:FlowPanel ui:field="answerPanel" styleName="answerPanel" />
+    <gwt:SimplePanel ui:field="answerOuter" styleName="{style.answerOuter}">
+      <gwt:FlowPanel ui:field="answerPanel" styleName="{style.answerPanel}" />
     </gwt:SimplePanel>
+    <gwt:HTML ui:field="debugPanel" styleName="{style.clearBoth}" />
   </gwt:FlowPanel>
 
 </ui:UiBinder>
