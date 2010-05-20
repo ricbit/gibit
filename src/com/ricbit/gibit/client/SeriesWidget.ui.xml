@@ -15,14 +15,15 @@
 -->
 
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
+    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'
+    xmlns:ricbit='urn:import:com.ricbit.gibit.client'>
   
   <ui:style>
     .outerPanel {
       width: 220px;
       margin: 5px;
       float: left;
-      display: inline;
+      display: block;
     }
     .imageOuter {
       height: 330px;
@@ -36,18 +37,28 @@
     }
     .image {
       max-height: 330px;
+      border: 0px;
+    }
+    .caption {
+      margin-left: 10px;
+      margin-right: 10px;
+      height: 3.5em;
+    }
+    .bold {
+      font-weight: bold;
     }
   </ui:style>
   
-  <gwt:FlowPanel styleName="{style.outerPanel}">
-    <gwt:SimplePanel styleName="{style.imageOuter}">
-      <gwt:SimplePanel styleName="{style.imageInner}">
-        <gwt:Image ui:field="seriesImage" styleName="{style.image}" />
+  <ricbit:AnchorPanel ui:field="anchor" styleName="{style.outerPanel}">
+      <gwt:SimplePanel styleName="{style.imageOuter}">
+        <gwt:SimplePanel styleName="{style.imageInner}">
+          <gwt:Image ui:field="seriesImage" styleName="{style.image}" />
+        </gwt:SimplePanel>
       </gwt:SimplePanel>
-    </gwt:SimplePanel>
-    <gwt:FlowPanel>
-      <gwt:HTML ui:field="seriesName" />
-    </gwt:FlowPanel>
-  </gwt:FlowPanel>
+      <gwt:FlowPanel styleName="{style.caption}">
+        <gwt:InlineLabel ui:field="seriesName" styleName="{style.bold}" />
+        <gwt:InlineLabel ui:field="seriesInfo" />
+      </gwt:FlowPanel>
+  </ricbit:AnchorPanel>
 
 </ui:UiBinder>

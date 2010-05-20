@@ -63,6 +63,9 @@ public class Gibit extends Composite implements EntryPoint {
 
   @UiField
   SimplePanel answerOuter;
+  
+  @UiField
+  HTML debugPanel;
 
   public Gibit() {
     initWidget(BINDER.createAndBindUi(this));
@@ -111,8 +114,9 @@ public class Gibit extends Composite implements EntryPoint {
   }
   
   private void displayResults(List<SeriesDto> results) {
-    int seriesPerPage = (answerOuter.getOffsetWidth() - 50) / 230;
+    int seriesPerPage = (answerOuter.getOffsetWidth()) / 230;
     int amountToDisplay = Math.min(results.size(), seriesPerPage);
+    answerPanel.setWidth(String.valueOf(amountToDisplay * 230) + "px");
     for (int i = 0; i < amountToDisplay; i++) {
       SeriesWidget widget = new SeriesWidget();
       widget.setSeries(results.get(i));
