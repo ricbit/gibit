@@ -18,7 +18,7 @@
     xmlns:gwt='urn:import:com.google.gwt.user.client.ui'
     xmlns:ricbit='urn:import:com.ricbit.gibit.client'>
   
-  <ui:style>
+  <ui:style type="com.ricbit.gibit.client.SeriesPagination.Style">
     .mainPanel {
       display: block;
       margin: 0 auto;
@@ -30,19 +30,23 @@
     .controls {
       text-align: center;
     }
-    .button {
+    .buttonEnabled {
       color: #00A;
       margin-left: 10px;
       margin-right: 10px;
       cursor: pointer;
     }
+    .buttonDisabled {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
   </ui:style>
   
   <gwt:FlowPanel ui:field="outerPanel" styleName="{style.outerPanel}">
     <gwt:FlowPanel ui:field="mainPanel" styleName="{style.mainPanel}" />
-    <gwt:FlowPanel ui:field="controls" styleName="{style.controls}" visible="false">
-      <gwt:InlineLabel ui:field="prevButton" text="&lt; Prev" styleName="{style.button}" />
-      <gwt:InlineLabel ui:field="nextButton" text="Next &gt;" styleName="{style.button}" />      
+    <gwt:FlowPanel ui:field="controls" styleName="{style.controls}">
+      <gwt:InlineLabel ui:field="prevButton" text="&lt; Prev" styleName="{style.buttonDisabled}" />
+      <gwt:InlineLabel ui:field="nextButton" text="Next &gt;" styleName="{style.buttonDisabled}" />      
     </gwt:FlowPanel>
   </gwt:FlowPanel>
 
