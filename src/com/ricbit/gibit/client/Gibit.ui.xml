@@ -15,7 +15,8 @@
 -->
 
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
+    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'
+    xmlns:ricbit='urn:import:com.ricbit.gibit.client'>
   
   <ui:style>
     .queryPanel {
@@ -31,14 +32,6 @@
       text-align: center;
       display: inline;
     }
-    .answerPanel {
-      display: block;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-    .answerOuter {
-      margin-right: 10px;
-    }
     .clearBoth {
       clear: both;
     }
@@ -47,6 +40,9 @@
       height: 230px;
       display: block;
       margin: 10px auto;
+    }
+    .pagination {
+      margin-right: 20px;
     }
   </ui:style>
   
@@ -58,12 +54,10 @@
       </gwt:FlowPanel>
       <gwt:FlowPanel styleName="{style.fixedWidth}">
         <gwt:TextBox ui:field="queryField" styleName="{style.query}" text="new mutants" />
-        <gwt:Button ui:field="sendButton" text="Send" />
+        <gwt:Button ui:field="sendButton" text="Search" />
       </gwt:FlowPanel>
     </gwt:FlowPanel>
-    <gwt:SimplePanel ui:field="answerOuter" styleName="{style.answerOuter}">
-      <gwt:FlowPanel ui:field="answerPanel" styleName="{style.answerPanel}" />
-    </gwt:SimplePanel>
+    <ricbit:SeriesPagination ui:field="seriesPagination" styleName="{style.pagination}" />
     <gwt:HTML ui:field="debugPanel" styleName="{style.clearBoth}" />
   </gwt:FlowPanel>
 

@@ -50,15 +50,15 @@
   </ui:style>
   
   <ricbit:AnchorPanel ui:field="anchor" styleName="{style.outerPanel}">
-      <gwt:SimplePanel styleName="{style.imageOuter}">
-        <gwt:SimplePanel styleName="{style.imageInner}">
-          <gwt:Image ui:field="seriesImage" styleName="{style.image}" />
-        </gwt:SimplePanel>
+    <gwt:SimplePanel styleName="{style.imageOuter}">
+      <gwt:SimplePanel styleName="{style.imageInner}">
+        <gwt:Image ui:field="seriesImage" styleName="{style.image}" />
       </gwt:SimplePanel>
-      <gwt:FlowPanel styleName="{style.caption}">
-        <gwt:InlineLabel ui:field="seriesName" styleName="{style.bold}" />
-        <gwt:InlineLabel ui:field="seriesInfo" />
-      </gwt:FlowPanel>
+    </gwt:SimplePanel>
+    <gwt:FlowPanel styleName="{style.caption}">
+      <gwt:InlineLabel ui:field="seriesName" styleName="{style.bold}" />
+      <gwt:InlineLabel ui:field="seriesInfo" />
+    </gwt:FlowPanel>
   </ricbit:AnchorPanel>
 
 </ui:UiBinder>

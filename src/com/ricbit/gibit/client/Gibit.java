@@ -32,7 +32,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.ricbit.gibit.shared.SeriesDto;
@@ -56,13 +55,10 @@ public class Gibit extends Composite implements EntryPoint {
   Button sendButton;
 
   @UiField
-  FlowPanel answerPanel;
-  
-  @UiField
   FlowPanel outerPanel;
 
   @UiField
-  SimplePanel answerOuter;
+  SeriesPagination seriesPagination;
   
   @UiField
   HTML debugPanel;
@@ -94,7 +90,7 @@ public class Gibit extends Composite implements EntryPoint {
 
   private void performQuery() {
     sendButton.setEnabled(false);
-    answerPanel.clear();
+    seriesPagination.clear();
     searchService.searchServer(queryField.getText(), new AsyncCallback<List<SeriesDto>>() {
       @Override
       public void onFailure(Throwable caught) {
@@ -109,19 +105,12 @@ public class Gibit extends Composite implements EntryPoint {
   }
   
   private void queryNotFound() {
-    answerPanel.add(new HTML("<center>Series not found.</center>"));    
+    //answerPanel.add(new HTML("<center>Series not found.</center>"));    
     sendButton.setEnabled(true);
   }
   
   private void displayResults(List<SeriesDto> results) {
-    int seriesPerPage = (answerOuter.getOffsetWidth()) / 230;
-    int amountToDisplay = Math.min(results.size(), seriesPerPage);
-    answerPanel.setWidth(String.valueOf(amountToDisplay * 230) + "px");
-    for (int i = 0; i < amountToDisplay; i++) {
-      SeriesWidget widget = new SeriesWidget();
-      widget.setSeries(results.get(i));
-      answerPanel.add(widget);
-    }
+    seriesPagination.setSeries(results);
     sendButton.setEnabled(true);
   }
 }
