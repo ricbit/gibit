@@ -64,14 +64,14 @@ public class SeriesPagination extends Composite {
     seriesPerPage = (outerPanel.getOffsetWidth()) / 230;
     currentPage = 0;
     setPage(currentPage);
+    controls.setVisible(series.size() > seriesPerPage);
   }
 
   private void setPage(int page) {
     int start = seriesPerPage * currentPage;
     int end = Math.min(series.size(), start + seriesPerPage); 
-    mainPanel.setWidth(String.valueOf((end - start)* 230) + "px");
+    mainPanel.setWidth(String.valueOf((end - start) * 230) + "px");
     mainPanel.clear();
-    controls.setVisible(true);
     for (int i = start; i < end; i++) {
       SeriesWidget widget = new SeriesWidget();
       widget.setSeries(series.get(i));
@@ -86,7 +86,7 @@ public class SeriesPagination extends Composite {
   @UiHandler("nextButton")
   public void nextButtonClick(ClickEvent event) {
     currentPage++;
-    if (currentPage * seriesPerPage > series.size()) {
+    if (currentPage * seriesPerPage >= series.size()) {
       currentPage--;
     }
     setPage(currentPage);
