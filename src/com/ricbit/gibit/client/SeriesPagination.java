@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -33,6 +34,14 @@ public class SeriesPagination extends Composite {
   
   interface Binder extends UiBinder<Widget, SeriesPagination> {}
   private static Binder BINDER = GWT.create(Binder.class);
+  
+  interface Style extends CssResource {
+    String buttonEnabled();
+    String buttonDisabled();
+  }
+  
+  @UiField
+  Style style;
   
   @UiField
   FlowPanel mainPanel;
@@ -64,7 +73,6 @@ public class SeriesPagination extends Composite {
     seriesPerPage = (outerPanel.getOffsetWidth()) / 230;
     currentPage = 0;
     setPage(currentPage);
-    controls.setVisible(series.size() > seriesPerPage);
   }
 
   private void setPage(int page) {
@@ -77,6 +85,8 @@ public class SeriesPagination extends Composite {
       widget.setSeries(series.get(i));
       mainPanel.add(widget);
     }
+    prevButton.setStyleName(page == 0 ? style.buttonDisabled() : style.buttonEnabled());
+    nextButton.setStyleName(end == series.size() ? style.buttonDisabled() : style.buttonEnabled());
   }
 
   public void clear() {
@@ -90,6 +100,7 @@ public class SeriesPagination extends Composite {
       currentPage--;
     }
     setPage(currentPage);
+    event.stopPropagation();
   }
 
   @UiHandler("prevButton")
@@ -99,5 +110,6 @@ public class SeriesPagination extends Composite {
       currentPage++;
     }
     setPage(currentPage);
+    event.stopPropagation();
   }
 }

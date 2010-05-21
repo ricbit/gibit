@@ -26,6 +26,7 @@
     .query {
       width: 400px;
       margin-right: 5px;
+      height: 20px;
     }
     .fixedWidth {
       width: 450px;
@@ -43,6 +44,13 @@
     }
     .pagination {
       margin-right: 20px;
+      margin-bottom: 2em;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0px;
+      text-align: center;
+      width: 100%;
     }
   </ui:style>
   
@@ -57,8 +65,13 @@
         <gwt:Button ui:field="sendButton" text="Search" />
       </gwt:FlowPanel>
     </gwt:FlowPanel>
-    <ricbit:SeriesPagination ui:field="seriesPagination" styleName="{style.pagination}" />
+    <ricbit:SeriesPagination ui:field="seriesPagination" 
+        styleName="{style.pagination}" visible="false" />
     <gwt:HTML ui:field="debugPanel" styleName="{style.clearBoth}" />
+    <gwt:HTMLPanel styleName="{style.footer}">
+      Written by <a href="http://blog.ricbit.com/">Ricardo Bittencourt</a>. 
+      Uses data from the <a href="http://www.comics.org/">Grand Comics Database</a>
+    </gwt:HTMLPanel>
   </gwt:FlowPanel>
 
 </ui:UiBinder>
