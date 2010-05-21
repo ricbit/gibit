@@ -28,15 +28,21 @@
       margin-right: 10px;
     }
     .controls {
-      margin: 0 auto;
+      text-align: center;
+    }
+    .button {
+      color: #00A;
+      margin-left: 10px;
+      margin-right: 10px;
+      cursor: pointer;
     }
   </ui:style>
   
   <gwt:FlowPanel ui:field="outerPanel" styleName="{style.outerPanel}">
     <gwt:FlowPanel ui:field="mainPanel" styleName="{style.mainPanel}" />
     <gwt:FlowPanel ui:field="controls" styleName="{style.controls}" visible="false">
-      <gwt:InlineLabel ui:field="prevButton" text="&lt; Prev" />
-      <gwt:InlineLabel ui:field="nextButton" text="Next &gt;" />      
+      <gwt:InlineLabel ui:field="prevButton" text="&lt; Prev" styleName="{style.button}" />
+      <gwt:InlineLabel ui:field="nextButton" text="Next &gt;" styleName="{style.button}" />      
     </gwt:FlowPanel>
   </gwt:FlowPanel>
 

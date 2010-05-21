@@ -90,7 +90,7 @@ public class Gibit extends Composite implements EntryPoint {
 
   private void performQuery() {
     sendButton.setEnabled(false);
-    seriesPagination.clear();
+    seriesPagination.setVisible(false);
     searchService.searchServer(queryField.getText(), new AsyncCallback<List<SeriesDto>>() {
       @Override
       public void onFailure(Throwable caught) {
@@ -110,6 +110,7 @@ public class Gibit extends Composite implements EntryPoint {
   }
   
   private void displayResults(List<SeriesDto> results) {
+    seriesPagination.setVisible(true);
     seriesPagination.setSeries(results);
     sendButton.setEnabled(true);
   }
