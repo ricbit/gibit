@@ -16,11 +16,9 @@
 
 package com.ricbit.gibit.client;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.ricbit.gibit.shared.SeriesDto;
+import com.ricbit.gibit.shared.SearchResponse;
 import com.ricbit.gibit.shared.SeriesNotFoundException;
 
 /**
@@ -28,5 +26,5 @@ import com.ricbit.gibit.shared.SeriesNotFoundException;
  */
 @RemoteServiceRelativePath("search")
 public interface SearchService extends RemoteService {
-	List<SeriesDto> searchServer(String name) throws SeriesNotFoundException;
+	SearchResponse searchServer(String name) throws SeriesNotFoundException;
 }

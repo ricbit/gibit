@@ -32,8 +32,10 @@ import com.google.appengine.repackaged.com.google.common.collect.Sets;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.Inject;
 import com.ricbit.gibit.client.SearchService;
+import com.ricbit.gibit.shared.SearchResponse;
 import com.ricbit.gibit.shared.SeriesDto;
 import com.ricbit.gibit.shared.SeriesNotFoundException;
+import com.ricbit.gibit.shared.TimeMeasurementsDto;
 
 /**
  * The server side implementation of the RPC service.
@@ -47,12 +49,10 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
   private SetUtils setUtils;
   private KeyGenerator keyGenerator;
   private final DatastoreService datastoreService;
-
   private final RankingEngine rankingEngine;
-
   private final CacheKeyGenerator cacheKeyGenerator;
-
   private final Cache cache;
+  private final TimeInterval timeInterval;
 
   @Inject
   public SearchServiceImpl(
@@ -62,7 +62,8 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
       DatastoreService datastoreService,
       RankingEngine rankingEngine,
       CacheKeyGenerator cacheKeyGenerator,
-      Cache cache) {
+      Cache cache,
+      TimeInterval timeInterval) {
     this.wordSplitter = wordSplitter;
     this.setUtils = setUtils;
     this.keyGenerator = keyGenerator;
@@ -70,38 +71,62 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     this.rankingEngine = rankingEngine;
     this.cacheKeyGenerator = cacheKeyGenerator;
     this.cache = cache;
+    this.timeInterval = timeInterval;
   }
 
-  public List<SeriesDto> searchServer(String input) throws SeriesNotFoundException {   
+  public SearchResponse searchServer(String input) throws SeriesNotFoundException { 
+    SearchResponse response = new SearchResponse();
+    TimeMeasurementsDto timeMeasurementsDto = new TimeMeasurementsDto();
+    response.setTimeMeasurements(timeMeasurementsDto);
+    
     List<String> words = wordSplitter.split(input);
+    
+    timeInterval.start();
     String cacheKey = cacheKeyGenerator.generateCacheKey(words);
     ArrayList<SeriesDto> cacheValue = (ArrayList<SeriesDto>)cache.get(cacheKey);
+    timeMeasurementsDto.setMemcacheRead(timeInterval.end());
+    
     if (cacheValue != null) {
-      return cacheValue;
+      response.setSeriesList(cacheValue);
+      return response;
     }
     
+    timeInterval.start();
     Iterable<Key> keyList = keyGenerator.generate("SeriesInvertedIndex", words); 
     Map<Key, Entity> resultMap = datastoreService.get(keyList);
+    timeMeasurementsDto.setInvertedDatastoreRead(timeInterval.end());
 
     if (resultMap.size() != words.size()){
       throw new SeriesNotFoundException();
     }
 
+    timeInterval.start();
     List<Set<Long>> setList = Lists.newArrayListWithCapacity(words.size());
     for (Map.Entry<Key, Entity> entry : resultMap.entrySet()) {
       Map<String, Object> properties = entry.getValue().getProperties();
       setList.add(Sets.newHashSet((List<Long>)properties.get("seriesNumberList")));
     }
     Iterable<Long> series = setUtils.intersect(setList);
+    timeMeasurementsDto.setIntersection(timeInterval.end());
 
     if (Iterables.isEmpty(series)){
       throw new SeriesNotFoundException();
     }
 
+    timeInterval.start();
     ArrayList<SeriesDto> seriesList = buildSeriesDto(series);
+    timeMeasurementsDto.setDirectDatastoreRead(timeInterval.end());
+    
+    timeInterval.start();
     rankingEngine.rankSeries(seriesList);
+    timeMeasurementsDto.setRanking(timeInterval.end());
+    
+    timeInterval.start();
     cache.put(cacheKey, seriesList);
-    return seriesList;
+    timeMeasurementsDto.setMemcacheWrite(timeInterval.end());
+    
+    response.setSeriesList(seriesList);
+    return response;
   }
 
   private ArrayList<SeriesDto> buildSeriesDto(Iterable<Long> seriesIdList) 

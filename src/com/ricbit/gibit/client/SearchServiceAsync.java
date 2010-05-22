@@ -16,14 +16,12 @@
 
 package com.ricbit.gibit.client;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.ricbit.gibit.shared.SeriesDto;
+import com.ricbit.gibit.shared.SearchResponse;
 
 /**
  * The async counterpart of <code>SearchService</code>.
  */
 public interface SearchServiceAsync {
-	void searchServer(String input, AsyncCallback<List<SeriesDto>> callback);
+	void searchServer(String input, AsyncCallback<SearchResponse> callback);
 }
