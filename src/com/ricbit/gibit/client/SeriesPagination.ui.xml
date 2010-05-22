@@ -15,8 +15,7 @@
 -->
 
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'
-    xmlns:ricbit='urn:import:com.ricbit.gibit.client'>
+    xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
   
   <ui:style type="com.ricbit.gibit.client.SeriesPagination.Style">
     .mainPanel {
@@ -31,22 +30,22 @@
       text-align: center;
     }
     .buttonEnabled {
-      color: #00A;
       margin-left: 10px;
       margin-right: 10px;
       cursor: pointer;
     }
-    .buttonDisabled {
+    .buttonDisabled, .buttonDisabled:visited, .buttonDisabled:hover {
       margin-left: 10px;
       margin-right: 10px;
+      color: #000;
     }
   </ui:style>
   
   <gwt:FlowPanel ui:field="outerPanel" styleName="{style.outerPanel}">
     <gwt:FlowPanel ui:field="mainPanel" styleName="{style.mainPanel}" />
     <gwt:FlowPanel ui:field="controls" styleName="{style.controls}">
-      <gwt:InlineLabel ui:field="prevButton" text="&lt; Prev" styleName="{style.buttonDisabled}" />
-      <gwt:InlineLabel ui:field="nextButton" text="Next &gt;" styleName="{style.buttonDisabled}" />      
+      <gwt:Anchor ui:field="prevButton" text="&lt; Prev" styleName="{style.buttonDisabled}" />
+      <gwt:Anchor ui:field="nextButton" text="Next &gt;" styleName="{style.buttonDisabled}" />      
     </gwt:FlowPanel>
   </gwt:FlowPanel>
 

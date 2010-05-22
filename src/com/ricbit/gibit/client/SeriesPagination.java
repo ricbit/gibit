@@ -16,6 +16,7 @@
 
 package com.ricbit.gibit.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -24,9 +25,9 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ricbit.gibit.shared.SeriesDto;
 
@@ -50,10 +51,10 @@ public class SeriesPagination extends Composite {
   FlowPanel outerPanel;
 
   @UiField
-  InlineLabel prevButton;
+  Anchor prevButton;
   
   @UiField
-  InlineLabel nextButton;
+  Anchor nextButton;
   
   @UiField
   FlowPanel controls;
@@ -64,6 +65,8 @@ public class SeriesPagination extends Composite {
 
   private List<SeriesDto> series;
   
+  private List<SeriesWidget> widgetCache;
+  
   public SeriesPagination() {
     initWidget(BINDER.createAndBindUi(this));
   }
@@ -72,6 +75,10 @@ public class SeriesPagination extends Composite {
     series = seriesList;
     seriesPerPage = (outerPanel.getOffsetWidth()) / 230;
     currentPage = 0;
+    widgetCache = new ArrayList<SeriesWidget>();
+    for (int i = 0; i < series.size(); i++) {
+      widgetCache.add(null);
+    }
     setPage(currentPage);
   }
 
@@ -81,12 +88,22 @@ public class SeriesPagination extends Composite {
     mainPanel.setWidth(String.valueOf((end - start) * 230) + "px");
     mainPanel.clear();
     for (int i = start; i < end; i++) {
-      SeriesWidget widget = new SeriesWidget();
-      widget.setSeries(series.get(i));
+      SeriesWidget widget = getSeries(i);
       mainPanel.add(widget);
     }
     prevButton.setStyleName(page == 0 ? style.buttonDisabled() : style.buttonEnabled());
     nextButton.setStyleName(end == series.size() ? style.buttonDisabled() : style.buttonEnabled());
+  }
+
+  private SeriesWidget getSeries(int index) {
+    SeriesWidget widget = widgetCache.get(index);
+    if (widget != null) {
+      return widget;
+    }
+    widget = new SeriesWidget();
+    widget.setSeries(series.get(index));
+    widgetCache.set(index, widget);
+    return widget;
   }
 
   public void clear() {

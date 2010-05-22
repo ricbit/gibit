@@ -51,6 +51,7 @@
       bottom: 0px;
       text-align: center;
       width: 100%;
+      background-color: white;
     }
   </ui:style>
   
@@ -70,7 +71,7 @@
     <gwt:HTML ui:field="debugPanel" styleName="{style.clearBoth}" />
     <gwt:HTMLPanel styleName="{style.footer}">
       Written by <a href="http://blog.ricbit.com/">Ricardo Bittencourt</a>. 
-      Uses data from the <a href="http://www.comics.org/">Grand Comics Database</a>
+      Uses data from the <a href="http://www.comics.org/">Grand Comics Database</a>.
     </gwt:HTMLPanel>
   </gwt:FlowPanel>
 
