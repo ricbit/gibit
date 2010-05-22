@@ -16,8 +16,6 @@
 
 package com.ricbit.gibit.client;
 
-import java.util.List;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,10 +29,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.ricbit.gibit.shared.SeriesDto;
+import com.ricbit.gibit.shared.SearchResponse;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -62,6 +61,9 @@ public class Gibit extends Composite implements EntryPoint {
   
   @UiField
   HTML debugPanel;
+  
+  @UiField
+  FlowPanel loadingPanel;
 
   public Gibit() {
     initWidget(BINDER.createAndBindUi(this));
@@ -74,6 +76,7 @@ public class Gibit extends Composite implements EntryPoint {
     RootPanel.get().add(this);
     queryField.setFocus(true);
     queryField.selectAll();
+    Image.prefetch("loading.gif");
   }
 
   @UiHandler("sendButton")
@@ -91,14 +94,15 @@ public class Gibit extends Composite implements EntryPoint {
   private void performQuery() {
     sendButton.setEnabled(false);
     seriesPagination.setVisible(false);
-    searchService.searchServer(queryField.getText(), new AsyncCallback<List<SeriesDto>>() {
+    loadingPanel.setVisible(true);
+    searchService.searchServer(queryField.getText(), new AsyncCallback<SearchResponse>() {
       @Override
       public void onFailure(Throwable caught) {
         queryNotFound();
       }
 
       @Override
-      public void onSuccess(List<SeriesDto> results) {
+      public void onSuccess(SearchResponse results) {
         displayResults(results);
       }
     });
@@ -107,11 +111,13 @@ public class Gibit extends Composite implements EntryPoint {
   private void queryNotFound() {
     //answerPanel.add(new HTML("<center>Series not found.</center>"));    
     sendButton.setEnabled(true);
+    loadingPanel.setVisible(false);
   }
   
-  private void displayResults(List<SeriesDto> results) {
+  private void displayResults(SearchResponse results) {
+    loadingPanel.setVisible(false);
     seriesPagination.setVisible(true);
-    seriesPagination.setSeries(results);
+    seriesPagination.setSeries(results.getSeriesList());
     sendButton.setEnabled(true);
   }
 }

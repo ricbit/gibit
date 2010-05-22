@@ -91,7 +91,7 @@ public class SeriesPagination extends Composite {
       SeriesWidget widget = getSeries(i);
       mainPanel.add(widget);
     }
-    prevButton.setStyleName(page == 0 ? style.buttonDisabled() : style.buttonEnabled());
+    prevButton.setStyleName(start == 0 ? style.buttonDisabled() : style.buttonEnabled());
     nextButton.setStyleName(end == series.size() ? style.buttonDisabled() : style.buttonEnabled());
   }
 
@@ -117,7 +117,6 @@ public class SeriesPagination extends Composite {
       currentPage--;
     }
     setPage(currentPage);
-    event.stopPropagation();
   }
 
   @UiHandler("prevButton")
@@ -127,6 +126,5 @@ public class SeriesPagination extends Composite {
       currentPage++;
     }
     setPage(currentPage);
-    event.stopPropagation();
   }
 }

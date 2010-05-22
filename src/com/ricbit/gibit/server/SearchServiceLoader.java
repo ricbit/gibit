@@ -16,13 +16,11 @@
 
 package com.ricbit.gibit.server;
 
-import java.util.List;
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.ricbit.gibit.client.SearchService;
-import com.ricbit.gibit.shared.SeriesDto;
+import com.ricbit.gibit.shared.SearchResponse;
 import com.ricbit.gibit.shared.SeriesNotFoundException;
 
 /**
@@ -40,7 +38,7 @@ public class SearchServiceLoader extends RemoteServiceServlet implements SearchS
   }
   
   @Override
-  public List<SeriesDto> searchServer(String name) throws SeriesNotFoundException {    
+  public SearchResponse searchServer(String name) throws SeriesNotFoundException {    
     return service.searchServer(name);
   } 
 }
