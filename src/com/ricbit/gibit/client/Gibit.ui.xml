@@ -71,7 +71,7 @@
   </ui:style>
   
   <gwt:FlowPanel ui:field="outerPanel">
-    <gwt:Image url="logotipo_gibit.jpg" styleName="{style.image}" />
+    <gwt:Image url="logo.png" styleName="{style.image}" />
     <gwt:FlowPanel styleName="{style.queryPanel}">
       <gwt:FlowPanel styleName="{style.fixedWidth}">
         <gwt:Label text="Enter a comic series name (Batman, X-Men, Mônica):" />
