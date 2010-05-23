@@ -79,6 +79,10 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     TimeMeasurementsDto timeMeasurementsDto = new TimeMeasurementsDto();
     response.setTimeMeasurements(timeMeasurementsDto);
     
+    response.setDebug(input.trim().startsWith("debug:"));
+    if (response.isDebug()) {
+      input = input.replace("debug:", "");
+    }
     List<String> words = wordSplitter.split(input);
     
     timeInterval.start();

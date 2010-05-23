@@ -62,6 +62,10 @@
     .bold {
       font-weight: bold;
     }
+    .debug {
+      display: block;
+      margin: 10px auto;
+    }
   </ui:style>
   
   <gwt:FlowPanel ui:field="outerPanel">
@@ -81,6 +85,7 @@
     </gwt:FlowPanel>
     <ricbit:SeriesPagination ui:field="seriesPagination" 
         styleName="{style.pagination}" visible="false" />
+    <ricbit:DebugWidget ui:field="debug" styleName="{style.debug}" visible="false" />
     <gwt:HTML ui:field="debugPanel" styleName="{style.clearBoth}" />
     <gwt:HTMLPanel styleName="{style.footer}">
       Written by <a href="http://blog.ricbit.com/">Ricardo Bittencourt</a>. 
