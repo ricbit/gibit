@@ -33,9 +33,6 @@
       text-align: center;
       display: inline;
     }
-    .clearBoth {
-      clear: both;
-    }
     .image {
       width: 500px;
       height: 230px;
@@ -65,6 +62,11 @@
     .debug {
       display: block;
       margin: 10px auto;
+      clear: both;
+    }
+    .noMatch {
+      font-weight: bold;
+      margin-top: 100px;
     }
   </ui:style>
   
@@ -83,10 +85,13 @@
       <gwt:Image url="loading.gif" styleName="{style.loadingImage}" />
       <gwt:Label text="Loading..." styleName="{style.bold}" />
     </gwt:FlowPanel>
+    <gwt:FlowPanel ui:field="noMatchPanel" styleName="{style.fixedWidth}" visible="false">
+      <gwt:Label text="Sorry, no comics matched your query." styleName="{style.noMatch}" />
+      <gwt:Label text="Please try other keywords." />
+    </gwt:FlowPanel>
     <ricbit:SeriesPagination ui:field="seriesPagination" 
         styleName="{style.pagination}" visible="false" />
     <ricbit:DebugWidget ui:field="debug" styleName="{style.debug}" visible="false" />
-    <gwt:HTML ui:field="debugPanel" styleName="{style.clearBoth}" />
     <gwt:HTMLPanel styleName="{style.footer}">
       Written by <a href="http://blog.ricbit.com/">Ricardo Bittencourt</a>. 
       Uses data from the <a href="http://www.comics.org/">Grand Comics Database</a>.

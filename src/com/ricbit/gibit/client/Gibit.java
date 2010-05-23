@@ -29,7 +29,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -61,13 +60,13 @@ public class Gibit extends Composite implements EntryPoint {
   SeriesPagination seriesPagination;
   
   @UiField
-  HTML debugPanel;
-  
-  @UiField
   FlowPanel loadingPanel;
 
   @UiField
   DebugWidget debug;
+  
+  @UiField
+  FlowPanel noMatchPanel;
 
   private Duration duration;
   
@@ -102,6 +101,7 @@ public class Gibit extends Composite implements EntryPoint {
     seriesPagination.setVisible(false);
     loadingPanel.setVisible(true);
     debug.setVisible(false);
+    noMatchPanel.setVisible(false);
     duration = new Duration();
     searchService.searchServer(queryField.getText(), new AsyncCallback<SearchResponse>() {
       @Override
@@ -117,7 +117,7 @@ public class Gibit extends Composite implements EntryPoint {
   }
   
   private void queryNotFound() {
-    //answerPanel.add(new HTML("<center>Series not found.</center>"));    
+    noMatchPanel.setVisible(true);    
     sendButton.setEnabled(true);
     loadingPanel.setVisible(false);
   }
