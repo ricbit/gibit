@@ -16,6 +16,7 @@
 
 package com.ricbit.gibit.client;
 
+import com.google.gwt.core.client.Duration;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -65,6 +66,11 @@ public class Gibit extends Composite implements EntryPoint {
   @UiField
   FlowPanel loadingPanel;
 
+  @UiField
+  DebugWidget debug;
+
+  private Duration duration;
+  
   public Gibit() {
     initWidget(BINDER.createAndBindUi(this));
   }
@@ -95,6 +101,8 @@ public class Gibit extends Composite implements EntryPoint {
     sendButton.setEnabled(false);
     seriesPagination.setVisible(false);
     loadingPanel.setVisible(true);
+    debug.setVisible(false);
+    duration = new Duration();
     searchService.searchServer(queryField.getText(), new AsyncCallback<SearchResponse>() {
       @Override
       public void onFailure(Throwable caught) {
@@ -119,6 +127,9 @@ public class Gibit extends Composite implements EntryPoint {
     seriesPagination.setVisible(true);
     seriesPagination.setSeries(results.getSeriesList());
     sendButton.setEnabled(true);
+    if (results.isDebug()) {
+      debug.setTimeMeasurements(results.getTimeMeasurements(), duration.elapsedMillis());
+    }
   }
 }
 
