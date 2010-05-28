@@ -53,6 +53,8 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
   private final Cache cache;
   private final TimeInterval timeInterval;
 
+  private final Memcache memcache;
+
   @Inject
   public SearchServiceImpl(
       SetUtils setUtils, 
@@ -61,7 +63,8 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
       RankingEngine rankingEngine,
       CacheKeyGenerator cacheKeyGenerator,
       Cache cache,
-      TimeInterval timeInterval) {
+      TimeInterval timeInterval,
+      Memcache memcache) {
     this.setUtils = setUtils;
     this.keyGenerator = keyGenerator;
     this.datastoreService = datastoreService;
@@ -69,6 +72,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     this.cacheKeyGenerator = cacheKeyGenerator;
     this.cache = cache;
     this.timeInterval = timeInterval;
+    this.memcache = memcache;
   }
 
   public SearchResponse searchServer(String input) throws SeriesNotFoundException { 
@@ -80,8 +84,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     response.setDebug(query.isDebug());
     
     timeInterval.start();
-    String cacheKey = cacheKeyGenerator.generateCacheKey(query.getQueryTerms());
-    ArrayList<SeriesDto> cacheValue = (ArrayList<SeriesDto>)cache.get(cacheKey);
+    List<SeriesDto> cacheValue = memcache.getSeries(query.getNormalizedQuery());
     timeMeasurementsDto.setMemcacheRead(timeInterval.end());
     
     if (cacheValue != null) {
@@ -120,7 +123,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     timeMeasurementsDto.setRanking(timeInterval.end());
     
     timeInterval.start();
-    cache.put(cacheKey, seriesList);
+    memcache.setSeries(query.getNormalizedQuery(), seriesList);
     timeMeasurementsDto.setMemcacheWrite(timeInterval.end());
     
     response.setSeriesList(seriesList);
