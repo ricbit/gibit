@@ -45,7 +45,6 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 
   private static final long serialVersionUID = 1L;  
 
-  private WordSplitter wordSplitter;
   private SetUtils setUtils;
   private KeyGenerator keyGenerator;
   private final DatastoreService datastoreService;
@@ -56,7 +55,6 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 
   @Inject
   public SearchServiceImpl(
-      WordSplitter wordSplitter, 
       SetUtils setUtils, 
       KeyGenerator keyGenerator,
       DatastoreService datastoreService,
@@ -64,7 +62,6 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
       CacheKeyGenerator cacheKeyGenerator,
       Cache cache,
       TimeInterval timeInterval) {
-    this.wordSplitter = wordSplitter;
     this.setUtils = setUtils;
     this.keyGenerator = keyGenerator;
     this.datastoreService = datastoreService;
@@ -79,14 +76,11 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     TimeMeasurementsDto timeMeasurementsDto = new TimeMeasurementsDto();
     response.setTimeMeasurements(timeMeasurementsDto);
     
-    response.setDebug(input.trim().startsWith("debug:"));
-    if (response.isDebug()) {
-      input = input.replace("debug:", "");
-    }
-    List<String> words = wordSplitter.split(input);
+    Query query = new Query(input);
+    response.setDebug(query.isDebug());
     
     timeInterval.start();
-    String cacheKey = cacheKeyGenerator.generateCacheKey(words);
+    String cacheKey = cacheKeyGenerator.generateCacheKey(query.getQueryTerms());
     ArrayList<SeriesDto> cacheValue = (ArrayList<SeriesDto>)cache.get(cacheKey);
     timeMeasurementsDto.setMemcacheRead(timeInterval.end());
     
@@ -96,16 +90,16 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     }
     
     timeInterval.start();
-    Iterable<Key> keyList = keyGenerator.generate("SeriesInvertedIndex", words); 
+    Iterable<Key> keyList = keyGenerator.generate("SeriesInvertedIndex", query.getQueryTerms()); 
     Map<Key, Entity> resultMap = datastoreService.get(keyList);
     timeMeasurementsDto.setInvertedDatastoreRead(timeInterval.end());
 
-    if (resultMap.size() != words.size()){
+    if (resultMap.size() != query.getQueryTerms().size()){
       throw new SeriesNotFoundException();
     }
 
     timeInterval.start();
-    List<Set<Long>> setList = Lists.newArrayListWithCapacity(words.size());
+    List<Set<Long>> setList = Lists.newArrayListWithCapacity(query.getQueryTerms().size());
     for (Map.Entry<Key, Entity> entry : resultMap.entrySet()) {
       Map<String, Object> properties = entry.getValue().getProperties();
       setList.add(Sets.newHashSet((List<Long>)properties.get("seriesNumberList")));
