@@ -39,6 +39,7 @@ public class ServerModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(SearchService.class).to(SearchServiceImpl.class);
+    bind(Memcache.class).to(MemcacheImpl.class);
   }
   
   @Provides
