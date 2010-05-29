@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package com.ricbit.gibit.client;
+package com.ricbit.gibit.shared;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.ricbit.gibit.shared.SearchResponse;
-import com.ricbit.gibit.shared.SeriesNotFoundException;
 
 /**
- * The client side stub for the RPC service.
+ * The async counterpart of <code>SearchService</code>.
  */
-@RemoteServiceRelativePath("search")
-public interface SearchService extends RemoteService {
-	SearchResponse searchServer(String name) throws SeriesNotFoundException;
+public interface SearchServiceAsync {
+  void searchServer(String input, AsyncCallback<SearchResponse> callback);
 }

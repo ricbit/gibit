@@ -34,6 +34,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.ricbit.gibit.shared.SearchResponse;
+import com.ricbit.gibit.shared.SearchService;
+import com.ricbit.gibit.shared.SearchServiceAsync;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
