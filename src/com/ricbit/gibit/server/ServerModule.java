@@ -28,7 +28,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.ricbit.gibit.client.SearchService;
+import com.ricbit.gibit.shared.SearchService;
 
 /**
  * Guice module for the server.

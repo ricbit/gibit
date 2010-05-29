@@ -19,8 +19,8 @@ package com.ricbit.gibit.server;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.ricbit.gibit.client.SearchService;
 import com.ricbit.gibit.shared.SearchResponse;
+import com.ricbit.gibit.shared.SearchService;
 import com.ricbit.gibit.shared.SeriesNotFoundException;
 
 /**
