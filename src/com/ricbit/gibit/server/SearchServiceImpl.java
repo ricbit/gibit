@@ -16,17 +16,10 @@
 
 package com.ricbit.gibit.server;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.repackaged.com.google.common.collect.Iterables;
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
-import com.google.appengine.repackaged.com.google.common.collect.Sets;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.Inject;
 import com.ricbit.gibit.client.SearchService;
@@ -39,31 +32,26 @@ import com.ricbit.gibit.shared.TimeMeasurementsDto;
  * The server side implementation of the RPC service.
  */
 public class SearchServiceImpl extends RemoteServiceServlet implements SearchService {
-  private static final int MAX_KEYS_IN_A_QUERY = 1000;
-
   private static final long serialVersionUID = 1L;  
 
-  private SetUtils setUtils;
-  private KeyGenerator keyGenerator;
-  private final DatastoreService datastoreService;
+  private final SetUtils setUtils;
   private final RankingEngine rankingEngine;
   private final TimeInterval timeInterval;
   private final Memcache memcache;
+  private final Datastore datastore;
 
   @Inject
   public SearchServiceImpl(
       SetUtils setUtils, 
-      KeyGenerator keyGenerator,
-      DatastoreService datastoreService,
       RankingEngine rankingEngine,
       TimeInterval timeInterval,
-      Memcache memcache) {
+      Memcache memcache,
+      Datastore datastore) {
     this.setUtils = setUtils;
-    this.keyGenerator = keyGenerator;
-    this.datastoreService = datastoreService;
     this.rankingEngine = rankingEngine;
     this.timeInterval = timeInterval;
     this.memcache = memcache;
+    this.datastore = datastore;
   }
 
   public SearchResponse searchServer(String input) throws SeriesNotFoundException { 
@@ -84,21 +72,11 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     }
     
     timeInterval.start();
-    Iterable<Key> keyList = keyGenerator.generate("SeriesInvertedIndex", query.getQueryTerms()); 
-    Map<Key, Entity> resultMap = datastoreService.get(keyList);
+    List<Set<Long>> invertedIndex = datastore.getInvertedIndex(query.getQueryTerms());
     timeMeasurementsDto.setInvertedDatastoreRead(timeInterval.end());
 
-    if (resultMap.size() != query.getQueryTerms().size()){
-      throw new SeriesNotFoundException();
-    }
-
     timeInterval.start();
-    List<Set<Long>> setList = Lists.newArrayListWithCapacity(query.getQueryTerms().size());
-    for (Map.Entry<Key, Entity> entry : resultMap.entrySet()) {
-      Map<String, Object> properties = entry.getValue().getProperties();
-      setList.add(Sets.newHashSet((List<Long>)properties.get("seriesNumberList")));
-    }
-    Iterable<Long> series = setUtils.intersect(setList);
+    Iterable<Long> series = setUtils.intersect(invertedIndex);
     timeMeasurementsDto.setIntersection(timeInterval.end());
 
     if (Iterables.isEmpty(series)){
@@ -106,7 +84,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     }
 
     timeInterval.start();
-    ArrayList<SeriesDto> seriesList = buildSeriesDto(series);
+    List<SeriesDto> seriesList = datastore.getSeries(series);
     timeMeasurementsDto.setDirectDatastoreRead(timeInterval.end());
     
     timeInterval.start();
@@ -119,26 +97,5 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     
     response.setSeriesList(seriesList);
     return response;
-  }
-
-  private ArrayList<SeriesDto> buildSeriesDto(Iterable<Long> seriesIdList) 
-      throws SeriesNotFoundException {
-    Iterable<Long> limitedSeries = Iterables.limit(seriesIdList, MAX_KEYS_IN_A_QUERY);
-    Iterable<Key> keyList = keyGenerator.generate("Series", limitedSeries);       
-    Map<Key, Entity> resultMap = datastoreService.get(keyList);
-
-    ArrayList<SeriesDto> seriesDtoList = Lists.newArrayList();
-    for (Map.Entry<Key, Entity> entry : resultMap.entrySet()) {
-      Map<String, Object> properties = entry.getValue().getProperties();
-      SeriesDto seriesDto = new SeriesDto();
-      seriesDto.setId(Integer.parseInt(entry.getKey().getName()));
-      seriesDto.setName((String)properties.get("name"));
-      seriesDto.setYear(((Long)properties.get("year")).intValue());
-      seriesDto.setIssues(((Long)properties.get("issues")).intValue());
-      seriesDto.setPublisher((String)properties.get("publisher"));
-      seriesDto.setCoverPresent(((Long)properties.get("hascover")) == 1);
-      seriesDtoList.add(seriesDto);      
-    }
-    return seriesDtoList;
   }
 }
