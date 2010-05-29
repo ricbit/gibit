@@ -79,6 +79,11 @@ public class QueryTest extends TestCase {
         new Query("thor of asgard").getQueryTerms(), "asgard", "thor");
   }
 
+  public void testGetNormalizedQuery_stopWords() throws Exception {
+    assertEquals("conan destroyer", new Query("conan the destroyer").getNormalizedQuery());
+    assertEquals("asgard thor", new Query("thor of asgard").getNormalizedQuery());
+  }
+
   public void testGetQueryTerms_unicode() throws Exception {
     MoreAsserts.assertContentsInOrder(
         new Query("mônica").getQueryTerms(), "mônica");
@@ -86,6 +91,12 @@ public class QueryTest extends TestCase {
         new Query("saga da fênix").getQueryTerms(), "da", "fênix", "saga");
     MoreAsserts.assertContentsInOrder(
         new Query("África").getQueryTerms(), "áfrica");
+  }
+  
+  public void testGetNormalizedQuery_unicode() throws Exception {
+    assertEquals("mônica", new Query("mônica").getNormalizedQuery());
+    assertEquals("da fênix saga", new Query("saga da fênix").getNormalizedQuery());
+    assertEquals("áfrica", new Query("África").getNormalizedQuery());
   }
   
   public void testIsDebug() throws Exception {

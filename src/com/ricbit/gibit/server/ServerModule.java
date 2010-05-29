@@ -42,6 +42,7 @@ public class ServerModule extends AbstractModule {
   protected void configure() {
     bind(SearchService.class).to(SearchServiceImpl.class);
     bind(Memcache.class).to(MemcacheImpl.class);
+    bind(Datastore.class).to(DatastoreImpl.class);
     bind(String.class).annotatedWith(CachePrefix.class).toInstance(CACHE_PREFIX);
   }
   

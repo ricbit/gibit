@@ -29,6 +29,11 @@ import org.easymock.classextension.IMocksControl;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import com.ricbit.gibit.shared.SeriesDto;
 
+/**
+ * Tests for MemcacheImpl.
+ * 
+ * @author Ricardo Bittencourt (bluepenguin@gmail.com)
+ */
 public class MemcacheImplTest extends TestCase {
   private IMocksControl control;
   private Cache cache;
@@ -91,6 +96,4 @@ public class MemcacheImplTest extends TestCase {
   private MemcacheImpl createMemcache(String cachePrefix) {
     return new MemcacheImpl(cache, cachePrefix);
   }
-  
-
 }

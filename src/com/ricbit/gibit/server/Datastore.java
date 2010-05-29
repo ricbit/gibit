@@ -17,28 +17,31 @@
 package com.ricbit.gibit.server;
 
 import java.util.List;
+import java.util.Set;
 
 import com.ricbit.gibit.shared.SeriesDto;
+import com.ricbit.gibit.shared.SeriesNotFoundException;
 
 /**
- * Abstraction to access the Memcache.
+ * Abstraction to access the Datastore.
  * 
  * @author Ricardo Bittencourt (bluepenguin@gmail.com)
  */
-public interface Memcache {
+public interface Datastore {
   /**
-   * Retrieve from the memcache the list of series for a given query.
+   * Retrieves the inverted indexes for the list of terms in the query.
    * 
-   * @param normalizedQuery the query, normalized
-   * @return the list of series for this query, or null if not present in the cache
+   * @param queryTerms the list of terms in the query
+   * @return one set of ids for each term in the query
+   * @throws SeriesNotFoundException if some of the terms doesn't have an index
    */
-  public List<SeriesDto> getSeries(String normalizedQuery);
+  public List<Set<Long>> getInvertedIndex(List<String> queryTerms) throws SeriesNotFoundException;
   
   /**
-   * Inserts a list of series in the memcache.
+   * Get information of series from the direct index, given their ids.
    * 
-   * @param normalizedQuery the query that returned this list of series
-   * @param series a list of series to be stored in the cache
+   * @param seriesId a list of series ids
+   * @return a list with information about each series
    */
-  public void setSeries(String normalizedQuery, List<SeriesDto> series);
+  public List<SeriesDto> getSeries(Iterable<Long> seriesId);
 }
