@@ -36,10 +36,13 @@ import com.ricbit.gibit.client.SearchService;
  * @author Ricardo Bittencourt (bluepenguin@gmail.com)
  */
 public class ServerModule extends AbstractModule {
+  private static final String CACHE_PREFIX = "2";
+
   @Override
   protected void configure() {
     bind(SearchService.class).to(SearchServiceImpl.class);
     bind(Memcache.class).to(MemcacheImpl.class);
+    bind(String.class).annotatedWith(CachePrefix.class).toInstance(CACHE_PREFIX);
   }
   
   @Provides
