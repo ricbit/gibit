@@ -16,7 +16,6 @@
 
 package com.ricbit.gibit.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.jsr107cache.Cache;
@@ -37,7 +36,7 @@ public class MemcacheImpl implements Memcache {
   @Override
   @SuppressWarnings("unchecked")
   public List<SeriesDto> getSeries(String normalizedQuery) {
-    return (ArrayList<SeriesDto>) cache.get(buildCacheKey(normalizedQuery));
+    return (List<SeriesDto>) cache.get(buildCacheKey(normalizedQuery));
   }
 
   @Override
