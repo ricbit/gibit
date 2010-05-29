@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jsr107cache.Cache;
-
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
@@ -49,10 +47,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
   private KeyGenerator keyGenerator;
   private final DatastoreService datastoreService;
   private final RankingEngine rankingEngine;
-  private final CacheKeyGenerator cacheKeyGenerator;
-  private final Cache cache;
   private final TimeInterval timeInterval;
-
   private final Memcache memcache;
 
   @Inject
@@ -61,16 +56,12 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
       KeyGenerator keyGenerator,
       DatastoreService datastoreService,
       RankingEngine rankingEngine,
-      CacheKeyGenerator cacheKeyGenerator,
-      Cache cache,
       TimeInterval timeInterval,
       Memcache memcache) {
     this.setUtils = setUtils;
     this.keyGenerator = keyGenerator;
     this.datastoreService = datastoreService;
     this.rankingEngine = rankingEngine;
-    this.cacheKeyGenerator = cacheKeyGenerator;
-    this.cache = cache;
     this.timeInterval = timeInterval;
     this.memcache = memcache;
   }

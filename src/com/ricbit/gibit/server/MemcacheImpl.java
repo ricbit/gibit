@@ -25,12 +25,13 @@ import com.google.inject.Inject;
 import com.ricbit.gibit.shared.SeriesDto;
 
 public class MemcacheImpl implements Memcache {
-  private static final String CACHE_PREFIX = "2";
   private final Cache cache;
+  private final String cachePrefix;
   
   @Inject
-  public MemcacheImpl(Cache cache) {
-    this.cache = cache;    
+  public MemcacheImpl(Cache cache, @CachePrefix String cachePrefix) {
+    this.cache = cache;
+    this.cachePrefix = cachePrefix;    
   }
 
   @Override
@@ -45,6 +46,6 @@ public class MemcacheImpl implements Memcache {
   }
 
   private String buildCacheKey(String normalizedQuery) {
-    return CACHE_PREFIX + normalizedQuery;
+    return cachePrefix + normalizedQuery;
   }  
 }

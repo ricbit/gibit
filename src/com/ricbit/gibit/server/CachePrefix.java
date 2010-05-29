@@ -16,16 +16,16 @@
 
 package com.ricbit.gibit.server;
 
-import java.util.Collections;
-import java.util.List;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.appengine.repackaged.com.google.common.base.Joiner;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public class CacheKeyGenerator {
-  private static final Joiner JOINER = Joiner.on(" ");
-  
-  public String generateCacheKey(List<String> words) {
-    Collections.sort(words);
-    return "2" + JOINER.join(words);
-  }
+import com.google.inject.BindingAnnotation;
+
+@BindingAnnotation
+@Target({ PARAMETER })
+@Retention(RUNTIME)
+public @interface CachePrefix {
 }
