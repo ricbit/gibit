@@ -64,4 +64,9 @@ public class ServerModule extends AbstractModule {
     }
     return cache;
   }
+  
+  @Provides @Timestamp
+  public Long getTimestamp() {
+    return System.currentTimeMillis();
+  }
 }
