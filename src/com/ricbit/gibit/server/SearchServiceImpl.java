@@ -34,11 +34,11 @@ import com.ricbit.gibit.shared.TimeMeasurementsDto;
 public class SearchServiceImpl extends RemoteServiceServlet implements SearchService {
   private static final long serialVersionUID = 1L;  
 
-  private final SetUtils setUtils;
-  private final RankingEngine rankingEngine;
-  private final TimeInterval timeInterval;
-  private final Memcache memcache;
-  private final Datastore datastore;
+  private final transient SetUtils setUtils;
+  private final transient RankingEngine rankingEngine;
+  private final transient TimeInterval timeInterval;
+  private final transient Memcache memcache;
+  private final transient Datastore datastore;
 
   @Inject
   public SearchServiceImpl(

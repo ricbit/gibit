@@ -15,11 +15,11 @@
  */
 
 package com.ricbit.gibit.client;
+
 import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 
 public class AnchorPanel extends ComplexPanel {
   private AnchorElement anchor = Document.get().createAnchorElement();
@@ -37,5 +37,4 @@ public class AnchorPanel extends ComplexPanel {
   public void add(Widget child) {
     add(child, getElement());
   }
-  
 }
