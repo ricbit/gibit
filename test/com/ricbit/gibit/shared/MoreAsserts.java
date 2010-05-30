@@ -219,7 +219,7 @@ public final class MoreAsserts {
     public static MatchResult assertMatchesRegex(
             String message, String expectedRegex, String actual) {
         if (actual == null) {
-            failNotMatches(message, expectedRegex, actual);
+            failNotMatches(message, expectedRegex, null);
         }
         Matcher matcher = getMatcher(expectedRegex, actual);
         if (!matcher.matches()) {
@@ -247,7 +247,7 @@ public final class MoreAsserts {
     public static MatchResult assertContainsRegex(
             String message, String expectedRegex, String actual) {
         if (actual == null) {
-            failNotContains(message, expectedRegex, actual);
+            failNotContains(message, expectedRegex, null);
         }
         Matcher matcher = getMatcher(expectedRegex, actual);
         if (!matcher.find()) {
