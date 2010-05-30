@@ -17,77 +17,36 @@
 package com.ricbit.gibit.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TimeMeasurementsDto implements Serializable {
-
   private static final long serialVersionUID = 1L;
-
-  private Integer memcacheRead;
   
-  private Integer invertedDatastoreRead;
-
-  private Integer intersection;
+  public interface PipelineStage {
+    public static final int MEMCACHE_READ = 0;
+    public static final int INVERTED_DATASTORE_READ = 1;
+    public static final int INTERSECTION = 2;
+    public static final int DIRECT_DATASTORE_READ = 3;
+    public static final int RANKING = 4;
+    public static final int MEMCACHE_WRITE = 5;
+    public static final int TOTAL = 6;
+  }
   
-  private Integer directDatastoreRead;
-  
-  private Integer ranking;
-  
-  private Integer memcacheWrite;
+  private List<Integer> measure;
 
   public TimeMeasurementsDto() {
-    memcacheRead = 0;
-    memcacheWrite = 0;
-    intersection = 0;
-    invertedDatastoreRead = 0;
-    directDatastoreRead = 0;
-    ranking = 0;
+    measure = new ArrayList<Integer>();
+    for (int i = 0; i < PipelineStage.TOTAL; i++) {
+      measure.add(0);
+    }
+  }  
+  
+  public int getMeasure(int stage) {
+    return measure.get(stage);
   }
   
-  public Integer getMemcacheRead() {
-    return memcacheRead;
-  }
-
-  public void setMemcacheRead(Integer memcacheRead) {
-    this.memcacheRead = memcacheRead;
-  }
-
-  public Integer getInvertedDatastoreRead() {
-    return invertedDatastoreRead;
-  }
-
-  public void setInvertedDatastoreRead(Integer invertedDatastoreRead) {
-    this.invertedDatastoreRead = invertedDatastoreRead;
-  }
-
-  public Integer getIntersection() {
-    return intersection;
-  }
-
-  public void setIntersection(Integer intersection) {
-    this.intersection = intersection;
-  }
-
-  public Integer getDirectDatastoreRead() {
-    return directDatastoreRead;
-  }
-
-  public void setDirectDatastoreRead(Integer directDatastoreRead) {
-    this.directDatastoreRead = directDatastoreRead;
-  }
-
-  public Integer getRanking() {
-    return ranking;
-  }
-
-  public void setRanking(Integer ranking) {
-    this.ranking = ranking;
-  }
-
-  public Integer getMemcacheWrite() {
-    return memcacheWrite;
-  }
-
-  public void setMemcacheWrite(Integer memcacheWrite) {
-    this.memcacheWrite = memcacheWrite;
+  public void setMeasure(int stage, int value) {
+    measure.set(stage, value);
   }
 }

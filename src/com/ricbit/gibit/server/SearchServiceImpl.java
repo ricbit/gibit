@@ -16,6 +16,13 @@
 
 package com.ricbit.gibit.server;
 
+import static com.ricbit.gibit.shared.TimeMeasurementsDto.PipelineStage.DIRECT_DATASTORE_READ;
+import static com.ricbit.gibit.shared.TimeMeasurementsDto.PipelineStage.INTERSECTION;
+import static com.ricbit.gibit.shared.TimeMeasurementsDto.PipelineStage.INVERTED_DATASTORE_READ;
+import static com.ricbit.gibit.shared.TimeMeasurementsDto.PipelineStage.MEMCACHE_READ;
+import static com.ricbit.gibit.shared.TimeMeasurementsDto.PipelineStage.MEMCACHE_WRITE;
+import static com.ricbit.gibit.shared.TimeMeasurementsDto.PipelineStage.RANKING;
+
 import java.util.List;
 import java.util.Set;
 
@@ -36,66 +43,99 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 
   private final transient SetUtils setUtils;
   private final transient RankingEngine rankingEngine;
-  private final transient TimeInterval timeInterval;
   private final transient Memcache memcache;
   private final transient Datastore datastore;
+  private final transient Instrumentation instrumentation;
 
   @Inject
   public SearchServiceImpl(
       SetUtils setUtils, 
       RankingEngine rankingEngine,
-      TimeInterval timeInterval,
       Memcache memcache,
-      Datastore datastore) {
+      Datastore datastore,
+      Instrumentation instrumentation) {
     this.setUtils = setUtils;
     this.rankingEngine = rankingEngine;
-    this.timeInterval = timeInterval;
     this.memcache = memcache;
     this.datastore = datastore;
+    this.instrumentation = instrumentation;
   }
 
   public SearchResponse searchServer(String input) throws SeriesNotFoundException { 
     SearchResponse response = new SearchResponse();
     TimeMeasurementsDto timeMeasurementsDto = new TimeMeasurementsDto();
     response.setTimeMeasurements(timeMeasurementsDto);
+    instrumentation.setMeasurementDto(timeMeasurementsDto);
     
-    Query query = new Query(input);
+    final Query query = new Query(input);
     response.setDebug(query.isDebug());
     
-    timeInterval.start();
-    List<SeriesDto> cacheValue = memcache.getSeries(query.getNormalizedQuery());
-    timeMeasurementsDto.setMemcacheRead(timeInterval.end());
+    List<SeriesDto> cacheValue = instrumentation.measure(
+        MEMCACHE_READ, query.getNormalizedQuery(), 
+        new Instrumentation.MeasureableCode<List<SeriesDto>, String>() {
+          @Override
+          public List<SeriesDto> run(String normalizedQuery) {
+            return memcache.getSeries(normalizedQuery);
+          }         
+        });
     
     if (cacheValue != null) {
       response.setSeriesList(cacheValue);
       return response;
     }
     
-    timeInterval.start();
-    List<Set<Long>> invertedIndex = datastore.getInvertedIndex(query.getQueryTerms());
-    timeMeasurementsDto.setInvertedDatastoreRead(timeInterval.end());
+    List<Set<Long>> invertedIndex = instrumentation.measure(
+        INVERTED_DATASTORE_READ, query.getQueryTerms(), 
+        new Instrumentation.MeasureableCode<List<Set<Long>>, List<String>>() {
+          @Override
+          public List<Set<Long>> run(List<String> queryTerms) throws SeriesNotFoundException {
+            return datastore.getInvertedIndex(queryTerms);
+          }
+        });
+    
+    Iterable<Long> seriesIdList = instrumentation.measure(
+        INTERSECTION, invertedIndex, 
+        new Instrumentation.MeasureableCode<Iterable<Long>, List<Set<Long>>>() {
+          @Override
+          public Iterable<Long> run(List<Set<Long>> invertedIndex) {
+            return setUtils.intersect(invertedIndex);
+          }
+        }); 
 
-    timeInterval.start();
-    Iterable<Long> series = setUtils.intersect(invertedIndex);
-    timeMeasurementsDto.setIntersection(timeInterval.end());
-
-    if (Iterables.isEmpty(series)){
+    if (Iterables.isEmpty(seriesIdList)){
       throw new SeriesNotFoundException();
     }
 
-    timeInterval.start();
-    List<SeriesDto> seriesList = datastore.getSeries(series);
-    timeMeasurementsDto.setDirectDatastoreRead(timeInterval.end());
+    List<SeriesDto> seriesInfo = instrumentation.measure(
+        DIRECT_DATASTORE_READ, seriesIdList, 
+        new Instrumentation.MeasureableCode<List<SeriesDto>, Iterable<Long>>() {
+          @Override
+          public List<SeriesDto> run(Iterable<Long> seriesIdList) {
+            return datastore.getSeries(seriesIdList);
+          }
+        }); 
     
-    timeInterval.start();
-    rankingEngine.rankSeries(seriesList);
-    timeMeasurementsDto.setRanking(timeInterval.end());
+    instrumentation.measure(
+        RANKING, seriesInfo, 
+        new Instrumentation.MeasureableCode<Void, List<SeriesDto>>() {
+          @Override
+          public Void run(List<SeriesDto> seriesInfo) {
+            rankingEngine.rankSeries(seriesInfo);
+            return null;
+          }
+        }); 
+
+    instrumentation.measure(
+        MEMCACHE_WRITE, seriesInfo, 
+        new Instrumentation.MeasureableCode<Void, List<SeriesDto>>() {
+          @Override
+          public Void run(List<SeriesDto> seriesInfo) {
+            memcache.setSeries(query.getNormalizedQuery(), seriesInfo);
+            return null;
+          }
+        });
     
-    timeInterval.start();
-    memcache.setSeries(query.getNormalizedQuery(), seriesList);
-    timeMeasurementsDto.setMemcacheWrite(timeInterval.end());
-    
-    response.setSeriesList(seriesList);
+    response.setSeriesList(seriesInfo);
     return response;
   }
 }

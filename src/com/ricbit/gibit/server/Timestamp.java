@@ -16,14 +16,17 @@
 
 package com.ricbit.gibit.server;
 
-public class TimeInterval {
-  private long startTime;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-  public void start() {
-    startTime = System.currentTimeMillis();
-  }
-  
-  public int end() {
-    return (int)(System.currentTimeMillis() - startTime);
-  }
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import com.google.inject.BindingAnnotation;
+
+@BindingAnnotation
+@Target({ PARAMETER, METHOD })
+@Retention(RUNTIME)
+public @interface Timestamp {
 }

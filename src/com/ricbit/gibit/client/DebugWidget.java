@@ -16,6 +16,8 @@
 
 package com.ricbit.gibit.client;
 
+import static com.ricbit.gibit.shared.TimeMeasurementsDto.PipelineStage.TOTAL;
+
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.ricbit.gibit.shared.TimeMeasurementsDto;
@@ -31,17 +33,18 @@ public class DebugWidget extends Composite {
   }
   
   public void setTimeMeasurements(TimeMeasurementsDto dto, int totalTime) {
-    int overhead = totalTime - dto.getMemcacheRead() - dto.getInvertedDatastoreRead() -
-        dto.getDirectDatastoreRead() - dto.getIntersection() - dto.getMemcacheWrite() -
-        dto.getRanking();
+    int overhead = totalTime;
+    StringBuffer measures = new StringBuffer();
+    for (int i = 0; i < TOTAL; i++) {
+      overhead -= dto.getMeasure(i);
+      measures.append(Integer.toString(dto.getMeasure(i)) + "|");
+    }
     int maxScale = getMaxScale(totalTime);
     String url = 
         // Start with a bar chart, size 700x85.
         "http://chart.apis.google.com/chart?cht=bhs&chs=700x85" +
         // Data values
-        "&chd=t:" + dto.getMemcacheRead() + "|" + dto.getInvertedDatastoreRead() + "|" +
-        dto.getIntersection() + "|" + dto.getDirectDatastoreRead() + "|" +
-        dto.getRanking() + "|" + dto.getMemcacheWrite() + "|" + overhead +
+        "&chd=t:" + measures + overhead +
         // Colors for each section
         "&chco=30c030,3030c0,ffc050,c00000,8000c0,b0b0ff,e0e030" +
         // Data scale
