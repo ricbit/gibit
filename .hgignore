@@ -4,7 +4,7 @@ syntax: regexp
 ^war/WEB-INF/classes/.*
 ^war/WEB-INF/appengine-generated/.*
 ^test-classes/.*
-^.settings\org.eclipse.ltk.core.refactoring.prefs
+^.settings/org.eclipse.ltk.core.refactoring.prefs
 ^.lint4jprefs
 \.bak$
 \.pyc$
