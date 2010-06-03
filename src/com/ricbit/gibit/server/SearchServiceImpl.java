@@ -72,7 +72,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     
     List<SeriesDto> cacheValue = instrumentation.measure(
         MEMCACHE_READ, query.getNormalizedQuery(), 
-        new Instrumentation.MeasureableCode<List<SeriesDto>, String>() {
+        new Instrumentation.MeasurebleCode<List<SeriesDto>, String>() {
           @Override
           public List<SeriesDto> run(String normalizedQuery) {
             return memcache.getSeries(normalizedQuery);
@@ -86,7 +86,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     
     List<Set<Long>> invertedIndex = instrumentation.measure(
         INVERTED_DATASTORE_READ, query.getQueryTerms(), 
-        new Instrumentation.MeasureableCode<List<Set<Long>>, List<String>>() {
+        new Instrumentation.MeasurebleCode<List<Set<Long>>, List<String>>() {
           @Override
           public List<Set<Long>> run(List<String> queryTerms) throws SeriesNotFoundException {
             return datastore.getInvertedIndex(queryTerms);
@@ -95,7 +95,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     
     Iterable<Long> seriesIdList = instrumentation.measure(
         INTERSECTION, invertedIndex, 
-        new Instrumentation.MeasureableCode<Iterable<Long>, List<Set<Long>>>() {
+        new Instrumentation.MeasurebleCode<Iterable<Long>, List<Set<Long>>>() {
           @Override
           public Iterable<Long> run(List<Set<Long>> invertedIndex) {
             return setUtils.intersect(invertedIndex);
@@ -108,7 +108,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 
     List<SeriesDto> seriesInfo = instrumentation.measure(
         DIRECT_DATASTORE_READ, seriesIdList, 
-        new Instrumentation.MeasureableCode<List<SeriesDto>, Iterable<Long>>() {
+        new Instrumentation.MeasurebleCode<List<SeriesDto>, Iterable<Long>>() {
           @Override
           public List<SeriesDto> run(Iterable<Long> seriesIdList) {
             return datastore.getSeries(seriesIdList);
@@ -117,7 +117,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
     
     instrumentation.measure(
         RANKING, seriesInfo, 
-        new Instrumentation.MeasureableCode<Void, List<SeriesDto>>() {
+        new Instrumentation.MeasurebleCode<Void, List<SeriesDto>>() {
           @Override
           public Void run(List<SeriesDto> seriesInfo) {
             rankingEngine.rankSeries(seriesInfo);
@@ -127,7 +127,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 
     instrumentation.measure(
         MEMCACHE_WRITE, seriesInfo, 
-        new Instrumentation.MeasureableCode<Void, List<SeriesDto>>() {
+        new Instrumentation.MeasurebleCode<Void, List<SeriesDto>>() {
           @Override
           public Void run(List<SeriesDto> seriesInfo) {
             memcache.setSeries(query.getNormalizedQuery(), seriesInfo);
