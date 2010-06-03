@@ -47,7 +47,7 @@ public class SearchServiceImplTest extends TestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    control = EasyMock.createControl();
+    control = EasyMock.createStrictControl();
     setUtils = new SetUtils();
     rankingEngine = new RankingEngine();
     memcache = control.createMock(Memcache.class);

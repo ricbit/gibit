@@ -25,7 +25,7 @@ public class Instrumentation {
   private final Provider<Long> timestampProvider;
   private TimeMeasurementsDto measurementDto;
 
-  public interface MeasurebleCode<R, S> {
+  public interface MeasurableCode<R, S> {
     public R run (S input) throws SeriesNotFoundException;
   }
   
@@ -34,7 +34,8 @@ public class Instrumentation {
     this.timestampProvider = timestampProvider;
   }
   
-  public <R, S> R measure(int stage, S input, MeasurebleCode<R, S> code) throws SeriesNotFoundException {
+  public <R, S> R measure(int stage, S input, MeasurableCode<R, S> code) 
+      throws SeriesNotFoundException {
     long start = timestampProvider.get();
     R result = code.run(input);
     long end = timestampProvider.get();

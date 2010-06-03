@@ -16,16 +16,25 @@
 
 package com.ricbit.gibit.server;
 
-import com.ricbit.gibit.shared.SeriesNotFoundException;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-public class FakeInstrumentation extends Instrumentation {
-  public FakeInstrumentation() {
-    super(null);
+public class ServerTestSuite {
+  private static final Class<?>[] tests = {
+    InstrumentationTest.class,
+    KeyGeneratorTest.class,
+    MemcacheImplTest.class,
+    QueryTest.class,
+    RankingEngineTest.class,
+    SearchServiceImplTest.class,
+    SetUtilsTest.class
+  };
+  
+  public static Test suite() {
+    return new TestSuite(tests);
   }
-
-  @Override
-  public <R, S> R measure(int stage, S input, MeasurableCode<R, S> code)
-      throws SeriesNotFoundException {
-    return code.run(input);
+  
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(suite());  
   }
 }
