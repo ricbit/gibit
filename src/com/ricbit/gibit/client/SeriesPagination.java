@@ -41,6 +41,10 @@ public class SeriesPagination extends Composite {
     String buttonDisabled();
   }
   
+  public interface Presenter {
+    void onPageChange(int newPage);
+  }
+  
   @UiField
   Style style;
   
@@ -67,14 +71,16 @@ public class SeriesPagination extends Composite {
   
   private List<SeriesWidget> widgetCache;
   
+  private Presenter presenter;
+  
   public SeriesPagination() {
     initWidget(BINDER.createAndBindUi(this));
   }
 
-  public void setSeries(List<SeriesDto> seriesList) {
+  public void setSeries(List<SeriesDto> seriesList, int page) {
     series = seriesList;
     seriesPerPage = (outerPanel.getOffsetWidth()) / 230;
-    currentPage = 0;
+    currentPage = page * seriesPerPage >= seriesList.size() ? 0 : page;
     widgetCache = new ArrayList<SeriesWidget>();
     for (int i = 0; i < series.size(); i++) {
       widgetCache.add(null);
@@ -93,6 +99,7 @@ public class SeriesPagination extends Composite {
     }
     prevButton.setStyleName(start == 0 ? style.buttonDisabled() : style.buttonEnabled());
     nextButton.setStyleName(end == series.size() ? style.buttonDisabled() : style.buttonEnabled());
+    presenter.onPageChange(page);
   }
 
   private SeriesWidget getSeries(int index) {
@@ -126,5 +133,9 @@ public class SeriesPagination extends Composite {
       currentPage++;
     }
     setPage(currentPage);
+  }
+
+  public void setPresenter(Presenter presenter) {
+    this.presenter = presenter;
   }
 }
