@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -40,7 +41,9 @@ import com.ricbit.gibit.shared.SearchServiceAsync;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Gibit extends Composite implements EntryPoint {
+public class Gibit extends Composite implements EntryPoint, SeriesPagination.Presenter {
+  private static final int FIRST_PAGE = 0;
+
   /**
    * Create a remote service proxy to talk to the server-side search service.
    */
@@ -72,6 +75,8 @@ public class Gibit extends Composite implements EntryPoint {
 
   private Duration duration;
   
+  private SearchState searchState = new SearchState();
+  
   public Gibit() {
     initWidget(BINDER.createAndBindUi(this));
   }
@@ -84,28 +89,34 @@ public class Gibit extends Composite implements EntryPoint {
     queryField.setFocus(true);
     queryField.selectAll();
     Image.prefetch("loading.gif");
+    searchState.setUrl(History.getToken());
+    seriesPagination.setPresenter(this);
+    if (!searchState.isEmpty()) {
+      queryField.setText(searchState.getQuery());
+      performQuery(searchState.getQuery(), searchState.getPage());
+    }
   }
 
   @UiHandler("sendButton")
   void handleClick(ClickEvent event) {
-    performQuery();
+    performQuery(queryField.getText(), FIRST_PAGE);
   }
 
   @UiHandler("queryField")
   void handleKeypress(KeyUpEvent event) {
     if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-      performQuery();
+      performQuery(queryField.getText(), FIRST_PAGE);
     }
   }
 
-  private void performQuery() {
+  private void performQuery(final String query, final int page) {
     sendButton.setEnabled(false);
     seriesPagination.setVisible(false);
     loadingPanel.setVisible(true);
     debug.setVisible(false);
     noMatchPanel.setVisible(false);
     duration = new Duration();
-    searchService.searchServer(queryField.getText(), new AsyncCallback<SearchResponse>() {
+    searchService.searchServer(query, new AsyncCallback<SearchResponse>() {
       @Override
       public void onFailure(Throwable caught) {
         queryNotFound();
@@ -113,7 +124,7 @@ public class Gibit extends Composite implements EntryPoint {
 
       @Override
       public void onSuccess(SearchResponse results) {
-        displayResults(results);
+        displayResults(results, query, page);
       }
     });
   }
@@ -124,14 +135,22 @@ public class Gibit extends Composite implements EntryPoint {
     loadingPanel.setVisible(false);
   }
   
-  private void displayResults(SearchResponse results) {
+  private void displayResults(SearchResponse results, String query, int page) {
     loadingPanel.setVisible(false);
     seriesPagination.setVisible(true);
-    seriesPagination.setSeries(results.getSeriesList());
+    seriesPagination.setSeries(results.getSeriesList(), page);
     sendButton.setEnabled(true);
+    searchState.setQuery(query, page);
+    History.newItem(searchState.getUrl());
     if (results.isDebug()) {
       debug.setTimeMeasurements(results.getTimeMeasurements(), duration.elapsedMillis());
     }
+  }
+
+  @Override
+  public void onPageChange(int newPage) {
+    searchState.setPage(newPage);
+    History.newItem(searchState.getUrl());
   }
 }
 
