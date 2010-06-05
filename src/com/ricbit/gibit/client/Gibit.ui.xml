@@ -77,7 +77,7 @@
         <gwt:Label text="Enter a comic series name (Batman, X-Men, Mônica):" />
       </gwt:FlowPanel>
       <gwt:FlowPanel styleName="{style.fixedWidth}">
-        <gwt:TextBox ui:field="queryField" styleName="{style.query}" text="new mutants" />
+        <gwt:TextBox ui:field="queryField" styleName="{style.query}" />
         <gwt:Button ui:field="sendButton" text="Search" />
       </gwt:FlowPanel>
     </gwt:FlowPanel>

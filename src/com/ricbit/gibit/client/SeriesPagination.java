@@ -88,8 +88,9 @@ public class SeriesPagination extends Composite {
     setPage(currentPage);
   }
 
-  private void setPage(int page) {
-    int start = seriesPerPage * currentPage;
+  public void setPage(int page) {
+    page = page * seriesPerPage >= series.size() ? 0 : page;
+    int start = seriesPerPage * page;
     int end = Math.min(series.size(), start + seriesPerPage); 
     mainPanel.setWidth(String.valueOf((end - start) * 230) + "px");
     mainPanel.clear();
@@ -99,7 +100,6 @@ public class SeriesPagination extends Composite {
     }
     prevButton.setStyleName(start == 0 ? style.buttonDisabled() : style.buttonEnabled());
     nextButton.setStyleName(end == series.size() ? style.buttonDisabled() : style.buttonEnabled());
-    presenter.onPageChange(page);
   }
 
   private SeriesWidget getSeries(int index) {
@@ -123,7 +123,8 @@ public class SeriesPagination extends Composite {
     if (currentPage * seriesPerPage >= series.size()) {
       currentPage--;
     }
-    setPage(currentPage);
+//    setPage(currentPage);
+    presenter.onPageChange(currentPage);
   }
 
   @UiHandler("prevButton")
@@ -132,7 +133,8 @@ public class SeriesPagination extends Composite {
     if (currentPage < 0) {
       currentPage++;
     }
-    setPage(currentPage);
+    presenter.onPageChange(currentPage);
+//    setPage(currentPage);
   }
 
   public void setPresenter(Presenter presenter) {
