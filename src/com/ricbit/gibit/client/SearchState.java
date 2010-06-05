@@ -23,7 +23,12 @@ public class SearchState {
   private String query;
   private int page;
   
-  public void setUrl(String token) {
+  public SearchState(String query, int page) {
+    this.query = query;
+    this.page = page;
+  }
+  
+  public SearchState(String token) {
     query = "";
     page = 0;
     String decodedToken = URL.decode(token);
@@ -58,11 +63,6 @@ public class SearchState {
     return page;
   }
 
-  public void setQuery(String newQuery, int newPage) {
-    query = newQuery;
-    page = newPage;
-  }
-
   public String getUrl() {
     String url = "search?";
     if (page != 0) {
@@ -70,9 +70,5 @@ public class SearchState {
     }
     url += "q=" + query; 
     return URL.encode(url);
-  }
-
-  public void setPage(int newPage) {
-    page = newPage;
   }
 }
