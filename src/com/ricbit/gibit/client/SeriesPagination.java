@@ -80,17 +80,16 @@ public class SeriesPagination extends Composite {
   public void setSeries(List<SeriesDto> seriesList, int page) {
     series = seriesList;
     seriesPerPage = (outerPanel.getOffsetWidth()) / 230;
-    currentPage = page * seriesPerPage >= seriesList.size() ? 0 : page;
     widgetCache = new ArrayList<SeriesWidget>();
     for (int i = 0; i < series.size(); i++) {
       widgetCache.add(null);
     }
-    setPage(currentPage);
+    setPage(page);
   }
 
   public void setPage(int page) {
-    page = page * seriesPerPage >= series.size() ? 0 : page;
-    int start = seriesPerPage * page;
+    currentPage = page * seriesPerPage >= series.size() || page < 0 ? 0 : page;
+    int start = seriesPerPage * currentPage;
     int end = Math.min(series.size(), start + seriesPerPage); 
     mainPanel.setWidth(String.valueOf((end - start) * 230) + "px");
     mainPanel.clear();
@@ -123,7 +122,6 @@ public class SeriesPagination extends Composite {
     if (currentPage * seriesPerPage >= series.size()) {
       currentPage--;
     }
-//    setPage(currentPage);
     presenter.onPageChange(currentPage);
   }
 
@@ -134,7 +132,6 @@ public class SeriesPagination extends Composite {
       currentPage++;
     }
     presenter.onPageChange(currentPage);
-//    setPage(currentPage);
   }
 
   public void setPresenter(Presenter presenter) {
