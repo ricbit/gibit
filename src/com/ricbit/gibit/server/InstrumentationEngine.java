@@ -16,38 +16,28 @@
 
 package com.ricbit.gibit.server;
 
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ricbit.gibit.shared.SeriesNotFoundException;
 import com.ricbit.gibit.shared.TimeMeasurementsDto;
 
-public class Instrumentation {
-  private final Provider<Long> timestampProvider;
-  private TimeMeasurementsDto measurementDto;
-
-  public interface MeasurableCode<R, S> {
-    public R run (S input) throws SeriesNotFoundException;
-  }
-  
+public class InstrumentationEngine implements MethodInterceptor {
   @Inject
-  public Instrumentation(@Timestamp Provider<Long> timestampProvider) {
-    this.timestampProvider = timestampProvider;
-  }
-  
-  public <R, S> R measure(int stage, S input, MeasurableCode<R, S> code) 
-      throws SeriesNotFoundException {
+  @Timestamp private Provider<Long> timestampProvider; 
+
+  @Override
+  public Object invoke(MethodInvocation invocation) throws Throwable {
+    Measure measure = invocation.getMethod().getAnnotation(Measure.class);
+    Object[] arguments = invocation.getArguments();
+    
     long start = timestampProvider.get();
-    R result = code.run(input);
+    Object result = invocation.proceed();
     long end = timestampProvider.get();
-    measurementDto.setMeasure(stage, (int) (end - start));
+    
+    TimeMeasurementsDto dto = (TimeMeasurementsDto) arguments[arguments.length - 1];
+    dto.setMeasure(measure.value(), (int) (end - start));
     return result;
-  }
-  
-  public void setMeasurementDto(TimeMeasurementsDto dto) {
-    measurementDto = dto;    
-  }
-  
-  public TimeMeasurementsDto getMeasurementDto() {
-    return measurementDto;
   }
 }

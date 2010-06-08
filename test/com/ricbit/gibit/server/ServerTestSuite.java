@@ -21,7 +21,6 @@ import junit.framework.TestSuite;
 
 public class ServerTestSuite {
   private static final Class<?>[] tests = {
-    InstrumentationTest.class,
     KeyGeneratorTest.class,
     MemcacheImplTest.class,
     QueryTest.class,

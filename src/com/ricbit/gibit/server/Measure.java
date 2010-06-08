@@ -16,16 +16,19 @@
 
 package com.ricbit.gibit.server;
 
-import com.ricbit.gibit.shared.SeriesNotFoundException;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class FakeInstrumentation extends Instrumentation {
-  public FakeInstrumentation() {
-    super(null);
-  }
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-  @Override
-  public <R, S> R measure(int stage, S input, MeasurableCode<R, S> code)
-      throws SeriesNotFoundException {
-    return code.run(input);
-  }
+import com.google.inject.BindingAnnotation;
+
+@BindingAnnotation
+@Target({ METHOD })
+@Retention(RUNTIME)
+public @interface Measure {
+
+  int value();
+
 }

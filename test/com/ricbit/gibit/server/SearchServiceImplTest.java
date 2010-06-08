@@ -41,7 +41,6 @@ public class SearchServiceImplTest extends TestCase {
   private RankingEngine rankingEngine;
   private Memcache memcache;
   private Datastore datastore;
-  private Instrumentation instrumentation;
   private SearchServiceImpl subject;
   
   @Override
@@ -52,8 +51,7 @@ public class SearchServiceImplTest extends TestCase {
     rankingEngine = new RankingEngine();
     memcache = control.createMock(Memcache.class);
     datastore = control.createMock(Datastore.class);
-    instrumentation = new FakeInstrumentation();
-    subject = new SearchServiceImpl(setUtils, rankingEngine, memcache, datastore, instrumentation);
+    subject = new SearchServiceImpl(setUtils, rankingEngine, memcache, datastore);
   }
   
   public void testSearchServer_cacheHit() throws Exception {
@@ -63,7 +61,6 @@ public class SearchServiceImplTest extends TestCase {
     
     String input = "New mutants";
     SearchResponse response = subject.searchServer(input);
-    assertSame(instrumentation.getMeasurementDto(), response.getTimeMeasurements());
     assertSame(seriesInfo, response.getSeriesList());
     control.verify();
   }
@@ -90,7 +87,6 @@ public class SearchServiceImplTest extends TestCase {
     
     SearchResponse response = subject.searchServer("New mutants");
     
-    assertSame(instrumentation.getMeasurementDto(), response.getTimeMeasurements());
     assertSame(seriesInfo, response.getSeriesList());
     control.verify();
   }
