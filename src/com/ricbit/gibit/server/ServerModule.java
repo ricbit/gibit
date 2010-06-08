@@ -28,6 +28,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.matcher.Matchers;
 import com.ricbit.gibit.shared.SearchService;
 
 /**
@@ -44,6 +45,12 @@ public class ServerModule extends AbstractModule {
     bind(Memcache.class).to(MemcacheImpl.class);
     bind(Datastore.class).to(DatastoreImpl.class);
     bind(String.class).annotatedWith(CachePrefix.class).toInstance(CACHE_PREFIX);
+    
+    // Bind the instrumentation using interceptors.
+    InstrumentationEngine instrumentationEngine = new InstrumentationEngine();
+    requestInjection(instrumentationEngine);
+    bindInterceptor(Matchers.any(), Matchers.annotatedWith(Measure.class), 
+        instrumentationEngine);
   }
   
   @Provides
